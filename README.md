@@ -1,9 +1,12 @@
-# ChainId library
-This library provides a `ChainId` type with handy constructors modeling the constraints and definitions of Lombard chain identifiers.
+# Chain library
+This library provides common utils for all components in the Lombard ecosystem.
+
+## ChainId
+The `ChainId` type models the constraints and definitions of Lombard chain identifiers. Handy constructors are provided for chains we support.
 
 Package is meant to not introduce new dependencies wherever it is included, so it only uses the Go Standard Library.
 
-## Supported Chains
+### Supported Chains
 
 - Ethereum `0x0000000000000000000000000000000000000000000000000000000000000001`
 - Ethereum Sepolia `0x0000000000000000000000000000000000000000000000000000000000aa36a7`

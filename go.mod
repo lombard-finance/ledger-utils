@@ -1,3 +1,3 @@
-module github.com/lombard-finance/chain-id
+module github.com/lombard-finance/chain
 
 go 1.22
