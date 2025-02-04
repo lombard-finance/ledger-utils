@@ -103,15 +103,70 @@ func TestChainIdErrorConditions(t *testing.T) {
 	assertError(t, err, ErrChainIdInvalid)
 }
 
+func TestChainIdFactories(t *testing.T) {
+	tests := []struct {
+		identifier string
+		factory    func(string) (*ChainId, error)
+		reference  func() ChainId
+	}{
+		{
+			"1", // no 0x
+			NewEVMChainId,
+			NewEVMEthereumChainId,
+		},
+		{
+			"0x4268", // with 0x
+			NewEVMChainId,
+			NewEVMHoleskyChainId,
+		},
+		{
+			"0x0000aa36a7", // with some zeroes
+			NewEVMChainId,
+			NewEVMSepoliaChainId,
+		},
+		{
+			"0x038", // with odd amount of zeroes
+			NewEVMChainId,
+			NewEVMBinanceSmartChainChainId,
+		},
+		{
+			"0x0000000000000000000000000000000000000000000000000000000000002105", // full 64 bytes
+			NewEVMChainId,
+			NewEVMBaseChainId,
+		},
+		{
+			"0x14a34",
+			NewEVMChainId,
+			NewEVMBaseSepoliaChainId,
+		},
+		{
+			"0x35834a8a",
+			NewSuiChainId,
+			NewSuiMainnetChainId,
+		},
+		{
+			"0x4c78adac",
+			NewSuiChainId,
+			NewSuiTestnetChainId,
+		},
+	}
+	for _, tt := range tests {
+		chainIdFromFactory, err := tt.factory(tt.identifier)
+		assertNoError(t, err)
+		chainIdFromReference := tt.reference()
+		equalChainId(t, chainIdFromReference, *chainIdFromFactory)
+	}
+}
+
 func assertNoError(t *testing.T, err error) {
 	if err != nil {
-		t.Fail()
+		t.FailNow()
 	}
 }
 
 func assertError(t *testing.T, err error, errorTypes ...error) {
 	if err == nil {
-		t.Fail()
+		t.FailNow()
 	}
 	if len(errorTypes) > 0 {
 		for _, target := range errorTypes {

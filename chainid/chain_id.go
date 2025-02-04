@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-const Length = 32
+const ChainIdLength = 32
 
 // Ecosystem identifies the Ecosystem a chain Id belongs to.
 type Ecosystem uint8
@@ -45,6 +45,10 @@ func (t Ecosystem) IsSupported() bool {
 	return true
 }
 
+func (t Ecosystem) ToEcosystemHexByte() string {
+	return hex.EncodeToString([]byte{byte(t)})
+}
+
 // DestinationChainId represents a destination chain id bytes. Please create instance
 // through constructors rather than relying on interal representation.
 type ChainId struct {
@@ -57,7 +61,7 @@ func NewChainId(in []byte) (*ChainId, error) {
 	if err := ValidateChainIdFromBytes(in); err != nil {
 		return nil, NewErrChainIdInvalid(err)
 	}
-	out := make([]byte, Length)
+	out := make([]byte, ChainIdLength)
 	copy(out, in)
 	return &ChainId{
 		inner: out,
@@ -87,7 +91,7 @@ func (a ChainId) Hex() string {
 
 // Bytes returns a copy of the bytes of the ChainId (BigEndian)
 func (a ChainId) Bytes() []byte {
-	out := make([]byte, Length)
+	out := make([]byte, ChainIdLength)
 	copy(out, a.inner)
 	return out
 }
@@ -106,8 +110,8 @@ func (a ChainId) Equal(b ChainId) bool {
 // ValidateChainIdFromBytes validates if a slice of bytes can be used to create a valid
 // ChainId instance. Ecosystem support is also verified.
 func ValidateChainIdFromBytes(chainIdBytes []byte) error {
-	if len(chainIdBytes) != Length {
-		return NewErrLenght(Length, len(chainIdBytes))
+	if len(chainIdBytes) != ChainIdLength {
+		return NewErrLenght(ChainIdLength, len(chainIdBytes))
 	}
 	if !Ecosystem(chainIdBytes[0]).IsSupported() {
 		return NewErrUnsupportedEcosystem(chainIdBytes[0])
