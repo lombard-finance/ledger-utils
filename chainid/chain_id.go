@@ -49,29 +49,56 @@ func (t Ecosystem) ToEcosystemHexByte() string {
 	return hex.EncodeToString([]byte{byte(t)})
 }
 
-// DestinationChainId represents a destination chain id bytes. Please create instance
-// through constructors rather than relying on interal representation.
-type ChainId struct {
-	inner []byte
+type ChainId interface {
+	// String returns the hex encoding of the DestinationChainId with leading 0x
+	String() string
+
+	// Hex returns the hex encoding of the DestinationChainId without leading 0x
+	Hex() string
+
+	// Bytes returns a copy of the bytes of the ChainId (BigEndian)
+	Bytes() []byte
+
+	// Ecosystem returns the Ecosystem the ChainId belongs to.
+	Ecosystem() Ecosystem
+
+	// Equal reports whether a and be are the same
+	Equal(b ChainId) bool
 }
 
 // NewChainId creates a new ChainId instance by accepting the bytes of the chain Id encoded
 // in Big Endian. Function returns an error if the chain Id is invalid or unsupported.
-func NewChainId(in []byte) (*ChainId, error) {
+func NewChainId(in []byte) (ChainId, error) {
 	if err := ValidateChainIdFromBytes(in); err != nil {
 		return nil, NewErrChainIdInvalid(err)
 	}
 	out := make([]byte, ChainIdLength)
 	copy(out, in)
-	return &ChainId{
+	id := chainId{
 		inner: out,
-	}, nil
+	}
+	switch id.Ecosystem() {
+	case EcosystemEVM:
+		return EVMChainId{
+			chainId: id,
+		}, nil
+	case EcosystemSui:
+		return SuiChainId{
+			chainId: id,
+		}, nil
+	case EcosystemBitcoin:
+		return BitcoinChainId{
+			chainId: id,
+		}, nil
+	default:
+		return nil, fmt.Errorf("chainid package is broken, validate accepted an unsupported chain")
+	}
 }
 
 // NewChainIdFromHex creates a new ChainId instance by accepting an hex string of the chain Id.
 // Hex string can be passed both with and without the leading 0x.
 // Function returns an error if the chain Id is invalid or unsupported.
-func NewChainIdFromHex(s string) (*ChainId, error) {
+func NewChainIdFromHex(s string) (ChainId, error) {
 	decoded, err := hex.DecodeString(strings.TrimPrefix(s, "0x"))
 	if err != nil {
 		return nil, NewErrChainIdInvalid(err)
@@ -79,32 +106,61 @@ func NewChainIdFromHex(s string) (*ChainId, error) {
 	return NewChainId(decoded)
 }
 
+// chainId is the base implementation providing basic feature all chain ids implement
+type chainId struct {
+	inner []byte
+}
+
+// NewChainId creates a new ChainId instance by accepting the bytes of the chain Id encoded
+// in Big Endian. Function returns an error if the chain Id is invalid or unsupported.
+func newChainId(in []byte) (*chainId, error) {
+	if err := ValidateChainIdFromBytes(in); err != nil {
+		return nil, NewErrChainIdInvalid(err)
+	}
+	out := make([]byte, ChainIdLength)
+	copy(out, in)
+	return &chainId{
+		inner: out,
+	}, nil
+}
+
+// NewChainIdFromHex creates a new ChainId instance by accepting an hex string of the chain Id.
+// Hex string can be passed both with and without the leading 0x.
+// Function returns an error if the chain Id is invalid or unsupported.
+func newChainIdFromHex(s string) (*chainId, error) {
+	decoded, err := hex.DecodeString(strings.TrimPrefix(s, "0x"))
+	if err != nil {
+		return nil, NewErrChainIdInvalid(err)
+	}
+	return newChainId(decoded)
+}
+
 // String returns the hex encoding of the DestinationChainId with leading 0x
-func (a ChainId) String() string {
+func (a chainId) String() string {
 	return "0x" + a.Hex()
 }
 
 // Hex returns the hex encoding of the DestinationChainId without leading 0x
-func (a ChainId) Hex() string {
+func (a chainId) Hex() string {
 	return hex.EncodeToString(a.inner)
 }
 
 // Bytes returns a copy of the bytes of the ChainId (BigEndian)
-func (a ChainId) Bytes() []byte {
+func (a chainId) Bytes() []byte {
 	out := make([]byte, ChainIdLength)
 	copy(out, a.inner)
 	return out
 }
 
 // Ecosystem returns the Ecosystem the ChainId belongs to.
-func (a ChainId) Ecosystem() Ecosystem {
+func (a chainId) Ecosystem() Ecosystem {
 	// Saved in big endian so MSB is in position 0
 	return Ecosystem(a.inner[0])
 }
 
 // Equal reports whether a and be are the same
-func (a ChainId) Equal(b ChainId) bool {
-	return bytes.Equal(a.inner, b.inner)
+func (a chainId) Equal(b ChainId) bool {
+	return bytes.Equal(a.inner, b.Bytes())
 }
 
 // ValidateChainIdFromBytes validates if a slice of bytes can be used to create a valid

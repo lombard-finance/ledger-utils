@@ -18,61 +18,61 @@ func TestChainId(t *testing.T) {
 			"Ethereum",
 			"0x0000000000000000000000000000000000000000000000000000000000000001",
 			EcosystemEVM,
-			NewEVMEthereumChainId,
+			func() ChainId { return NewEVMEthereumChainId() },
 		},
 		{
 			"Ethereum Sepolia",
 			"0x0000000000000000000000000000000000000000000000000000000000aa36a7",
 			EcosystemEVM,
-			NewEVMSepoliaChainId,
+			func() ChainId { return NewEVMSepoliaChainId() },
 		},
 		{
 			"Ethereum Holesky",
 			"0x0000000000000000000000000000000000000000000000000000000000004268",
 			EcosystemEVM,
-			NewEVMHoleskyChainId,
+			func() ChainId { return NewEVMHoleskyChainId() },
 		},
 		{
 			"Base",
 			"0x0000000000000000000000000000000000000000000000000000000000002105",
 			EcosystemEVM,
-			NewEVMBaseChainId,
+			func() ChainId { return NewEVMBaseChainId() },
 		},
 		{
 			"Base Sepolia",
 			"0x0000000000000000000000000000000000000000000000000000000000014a34",
 			EcosystemEVM,
-			NewEVMBaseSepoliaChainId,
+			func() ChainId { return NewEVMBaseSepoliaChainId() },
 		},
 		{
 			"BSC",
 			"0x0000000000000000000000000000000000000000000000000000000000000038",
 			EcosystemEVM,
-			NewEVMBinanceSmartChainChainId,
+			func() ChainId { return NewEVMBinanceSmartChainChainId() },
 		},
 		{
 			"Sui",
 			"0x0100000000000000000000000000000000000000000000000000000035834a8a",
 			EcosystemSui,
-			NewSuiMainnetChainId,
+			func() ChainId { return NewSuiMainnetChainId() },
 		},
 		{
 			"Sui Testnet",
 			"0x010000000000000000000000000000000000000000000000000000004c78adac",
 			EcosystemSui,
-			NewSuiTestnetChainId,
+			func() ChainId { return NewSuiTestnetChainId() },
 		},
 		{
 			"Bitcoin",
 			"0xff0000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f",
 			EcosystemBitcoin,
-			NewBitcoinChainId,
+			func() ChainId { return NewBitcoinChainId() },
 		},
 		{
 			"Bitcoin Signet",
 			"0xff000008819873e925422c1ff0f99f7cc9bbb232af63a077a480a3633bee1ef6",
 			EcosystemBitcoin,
-			NewBitcoinSignetChainId,
+			func() ChainId { return NewBitcoinSignetChainId() },
 		},
 	}
 
@@ -82,7 +82,7 @@ func TestChainId(t *testing.T) {
 			assertNoError(t, err)
 			equalStrings(t, test.hexChainId, chainId.String())
 			equalEcosystem(t, test.ecosystem, chainId.Ecosystem())
-			equalChainId(t, test.predefinedFactory(), *chainId)
+			equalChainId(t, test.predefinedFactory(), chainId)
 		})
 	}
 }
@@ -106,55 +106,55 @@ func TestChainIdErrorConditions(t *testing.T) {
 func TestChainIdFactories(t *testing.T) {
 	tests := []struct {
 		identifier string
-		factory    func(string) (*ChainId, error)
+		factory    func(string) (ChainId, error)
 		reference  func() ChainId
 	}{
 		{
 			"1", // no 0x
-			NewEVMChainId,
-			NewEVMEthereumChainId,
+			func(in string) (ChainId, error) { return NewEVMChainId(in) },
+			func() ChainId { return NewEVMEthereumChainId() },
 		},
 		{
 			"0x4268", // with 0x
-			NewEVMChainId,
-			NewEVMHoleskyChainId,
+			func(in string) (ChainId, error) { return NewEVMChainId(in) },
+			func() ChainId { return NewEVMHoleskyChainId() },
 		},
 		{
 			"0x0000aa36a7", // with some zeroes
-			NewEVMChainId,
-			NewEVMSepoliaChainId,
+			func(in string) (ChainId, error) { return NewEVMChainId(in) },
+			func() ChainId { return NewEVMSepoliaChainId() },
 		},
 		{
 			"0x038", // with odd amount of zeroes
-			NewEVMChainId,
-			NewEVMBinanceSmartChainChainId,
+			func(in string) (ChainId, error) { return NewEVMChainId(in) },
+			func() ChainId { return NewEVMBinanceSmartChainChainId() },
 		},
 		{
 			"0x0000000000000000000000000000000000000000000000000000000000002105", // full 64 bytes
-			NewEVMChainId,
-			NewEVMBaseChainId,
+			func(in string) (ChainId, error) { return NewEVMChainId(in) },
+			func() ChainId { return NewEVMBaseChainId() },
 		},
 		{
 			"0x14a34",
-			NewEVMChainId,
-			NewEVMBaseSepoliaChainId,
+			func(in string) (ChainId, error) { return NewEVMChainId(in) },
+			func() ChainId { return NewEVMBaseSepoliaChainId() },
 		},
 		{
 			"0x35834a8a",
-			NewSuiChainId,
-			NewSuiMainnetChainId,
+			func(in string) (ChainId, error) { return NewSuiChainId(in) },
+			func() ChainId { return NewSuiMainnetChainId() },
 		},
 		{
 			"0x4c78adac",
-			NewSuiChainId,
-			NewSuiTestnetChainId,
+			func(in string) (ChainId, error) { return NewSuiChainId(in) },
+			func() ChainId { return NewSuiTestnetChainId() },
 		},
 	}
 	for _, tt := range tests {
 		chainIdFromFactory, err := tt.factory(tt.identifier)
 		assertNoError(t, err)
 		chainIdFromReference := tt.reference()
-		equalChainId(t, chainIdFromReference, *chainIdFromFactory)
+		equalChainId(t, chainIdFromReference, chainIdFromFactory)
 	}
 }
 
