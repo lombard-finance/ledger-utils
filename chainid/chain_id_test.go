@@ -1,8 +1,10 @@
 package chainid
 
 import (
+	"bytes"
 	"encoding/hex"
 	"errors"
+	"strings"
 	"testing"
 )
 
@@ -81,8 +83,14 @@ func TestChainId(t *testing.T) {
 			chainId, err := NewChainIdFromHex(test.hexChainId)
 			assertNoError(t, err)
 			equalStrings(t, test.hexChainId, chainId.String())
+			equalStrings(t, test.hexChainId, "0x"+chainId.Hex())
 			equalEcosystem(t, test.ecosystem, chainId.Ecosystem())
 			equalChainId(t, test.predefinedFactory(), chainId)
+			referenceChainIdBytes, err := hex.DecodeString(strings.TrimPrefix(test.hexChainId, "0x"))
+			assertNoError(t, err)
+			equalBytes(t, referenceChainIdBytes, chainId.Bytes())
+			fixed := chainId.FixedBytes()
+			equalBytes(t, referenceChainIdBytes, fixed[:])
 		})
 	}
 }
@@ -179,6 +187,12 @@ func assertError(t *testing.T, err error, errorTypes ...error) {
 
 func equalStrings(t *testing.T, expected string, actual string) {
 	if expected != actual {
+		t.Errorf("expected: %s actual: %s", expected, actual)
+	}
+}
+
+func equalBytes(t *testing.T, expected []byte, actual []byte) {
+	if !bytes.Equal(expected, actual) {
 		t.Errorf("expected: %s actual: %s", expected, actual)
 	}
 }

@@ -59,6 +59,9 @@ type ChainId interface {
 	// Bytes returns a copy of the bytes of the ChainId (BigEndian)
 	Bytes() []byte
 
+	// FixedBytes returns a copy of the bytes of the ChainId (BigEndian) as an array rather than slice
+	FixedBytes() [ChainIdLength]byte
+
 	// Ecosystem returns the Ecosystem the ChainId belongs to.
 	Ecosystem() Ecosystem
 
@@ -149,6 +152,13 @@ func (a chainId) Hex() string {
 func (a chainId) Bytes() []byte {
 	out := make([]byte, ChainIdLength)
 	copy(out, a.inner)
+	return out
+}
+
+// FixedBytes returns a copy of the bytes of the ChainId (BigEndian) as an array rather than slice
+func (a chainId) FixedBytes() [ChainIdLength]byte {
+	var out [ChainIdLength]byte
+	copy(out[:], a.inner)
 	return out
 }
 
