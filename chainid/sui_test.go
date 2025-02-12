@@ -1,8 +1,11 @@
-package chainid
+package chainid_test
 
 import (
 	"strings"
 	"testing"
+
+	"github.com/lombard-finance/chain/chainid"
+	"github.com/lombard-finance/chain/common"
 )
 
 func TestSuiIdentifier(t *testing.T) {
@@ -12,8 +15,8 @@ func TestSuiIdentifier(t *testing.T) {
 	}
 
 	for _, id := range identifiers {
-		ch, _ := NewSuiLChainId(id)
-		equalStrings(t, strings.TrimPrefix(id, "0x"), ch.Identifier())
+		ch, _ := chainid.NewSuiLChainId(id)
+		common.EqualStrings(t, strings.TrimPrefix(id, "0x"), ch.Identifier())
 	}
 
 	hexChainIds := []struct {
@@ -31,10 +34,10 @@ func TestSuiIdentifier(t *testing.T) {
 	}
 
 	for _, id := range hexChainIds {
-		ch, _ := NewLChainIdFromHex(id.chainId)
+		ch, _ := chainid.NewLChainIdFromHex(id.chainId)
 		switch typesCh := ch.(type) {
-		case SuiLChainId:
-			equalStrings(t, id.expected, typesCh.Identifier())
+		case chainid.SuiLChainId:
+			common.EqualStrings(t, id.expected, typesCh.Identifier())
 		default:
 			t.FailNow()
 		}

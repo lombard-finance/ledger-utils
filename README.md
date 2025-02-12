@@ -1,10 +1,10 @@
 # Chain library
 This library provides common utils for all components in the Lombard ecosystem.
 
-## ChainId
-The `ChainId` type models the constraints and definitions of Lombard chain identifiers. Handy constructors are provided for chains we support.
+The library is meant to not introduce new dependencies, so it only uses the Go Standard Library.
 
-Package is meant to not introduce new dependencies wherever it is included, so it only uses the Go Standard Library.
+## LChainId
+The `LChainId` type models the constraints and definitions of Lombard chain identifiers. Handy constructors are provided for chains we support.
 
 ### Supported Chains
 
@@ -18,3 +18,7 @@ Package is meant to not introduce new dependencies wherever it is included, so i
 - Sui Testnet `0x010000000000000000000000000000000000000000000000000000004c78adac`
 - Bitcoin `0xff0000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f`
 - Bitcoin Signet `0xff000008819873e925422c1ff0f99f7cc9bbb232af63a077a480a3633bee1ef6`
+
+## Address
+
+The `Address` interface provides all the functionalities required by some data that carries information about a blockchain address. The address types of each supported chain implement this interface.

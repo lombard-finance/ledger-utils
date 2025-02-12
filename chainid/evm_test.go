@@ -1,6 +1,10 @@
-package chainid
+package chainid_test
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/lombard-finance/chain/chainid"
+)
 
 func TestEVMIdentifier(t *testing.T) {
 	hexChainIds := []string{
@@ -13,9 +17,9 @@ func TestEVMIdentifier(t *testing.T) {
 	}
 
 	for _, id := range hexChainIds {
-		ch, _ := NewLChainIdFromHex(id)
+		ch, _ := chainid.NewLChainIdFromHex(id)
 		switch ch.(type) {
-		case EVMLChainId:
+		case chainid.EVMLChainId:
 		default:
 			t.FailNow()
 		}
