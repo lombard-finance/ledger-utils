@@ -34,6 +34,30 @@ type Address interface {
 
 // ErrBadAddress is a generic error to return when there is an error with address validation
 var ErrBadAddress = fmt.Errorf("address invalid")
+var ErrUnsupportedEcosystem = fmt.Errorf("ecosystem is unsupported")
+
+// NewAddress creates a new Address instance from a slice of bytes whose concrete implementation
+// is defined by the provided ecosystem
+func NewAddress(b []byte, e chainid.Ecosystem) (Address, error) {
+	switch e {
+	case chainid.EcosystemEVM:
+		return NewEvmAddress(b)
+	case chainid.EcosystemSui:
+		return NewSuiAddress(b)
+	default:
+		return nil, fmt.Errorf("%w: %s", ErrUnsupportedEcosystem, e.String())
+	}
+}
+
+// NewAddressFromHex creates a new Address instance from an hex string of bytes whose concrete implementation
+// is defined by the provided ecosystem. `0x` is optional.
+func NewAddressFromHex(address string, e chainid.Ecosystem) (Address, error) {
+	decoded, err := hex.DecodeString(strings.TrimPrefix(address, "0x"))
+	if err != nil {
+		return nil, fmt.Errorf("%w: hex decoding error: %w", ErrBadAddress, err)
+	}
+	return NewAddress(decoded, e)
+}
 
 const EvmAddressLength = 20
 
@@ -109,6 +133,16 @@ type SuiAddress struct {
 	inner [SuiAddressLength]byte
 }
 
+// NewSuiAddress creates a new SuiAddress from a slice of bytes
+func NewSuiAddress(b []byte) (*SuiAddress, error) {
+	if len(b) != SuiAddressLength {
+		return nil, fmt.Errorf("%w: lenght error, given %d, expected %d", ErrBadAddressSui, len(b), SuiAddressLength)
+	}
+	a := &SuiAddress{}
+	copy(a.inner[:], b)
+	return a, nil
+}
+
 // NewSuiAddressFromHex creates a new SuiAddress from an hex string. Both string with
 // and without leading 0x are supported
 func NewSuiAddressFromHex(address string) (*SuiAddress, error) {
@@ -116,12 +150,7 @@ func NewSuiAddressFromHex(address string) (*SuiAddress, error) {
 	if err != nil {
 		return nil, fmt.Errorf("%w: hex decoding error %w", ErrBadAddressSui, err)
 	}
-	if len(b) != SuiAddressLength {
-		return nil, fmt.Errorf("%w: lenght error, given %d, expected %d", ErrBadAddressSui, len(b), SuiAddressLength)
-	}
-	return &SuiAddress{
-		inner: [SuiAddressLength]byte(b),
-	}, nil
+	return NewSuiAddress(b)
 }
 
 func (s *SuiAddress) String() string {

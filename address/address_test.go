@@ -10,6 +10,21 @@ import (
 	"github.com/lombard-finance/chain/common"
 )
 
+func TestNewAddress(t *testing.T) {
+	evmAddressString := "0x8236a87084f8B84306f72007F36F2618A5634494"
+	suiAddressString := "0xbfde966bacd4260852155f7b523ef157f0b75a0e1e8a0784e463c3ef0bb69deb"
+
+	evmAddress, err := address.NewAddressFromHex(evmAddressString, chainid.EcosystemEVM)
+	common.AssertNoError(t, err)
+	_, ok := evmAddress.(*address.EvmAddress)
+	common.AssertTrue(t, ok)
+
+	suiAddress, err := address.NewAddressFromHex(suiAddressString, chainid.EcosystemSui)
+	common.AssertNoError(t, err)
+	_, ok = suiAddress.(*address.SuiAddress)
+	common.AssertTrue(t, ok)
+}
+
 func TestEVMAddress(t *testing.T) {
 	validAddressString := "0x8236a87084f8B84306f72007F36F2618A5634494"
 	anotherValidAddressString := "0xA1Bc65eCf8BC7B2FAA22c53bcC49b0376Da3845A"
