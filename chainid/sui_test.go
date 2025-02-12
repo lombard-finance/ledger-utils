@@ -12,7 +12,7 @@ func TestSuiIdentifier(t *testing.T) {
 	}
 
 	for _, id := range identifiers {
-		ch, _ := NewSuiChainId(id)
+		ch, _ := NewSuiLChainId(id)
 		equalStrings(t, strings.TrimPrefix(id, "0x"), ch.Identifier())
 	}
 
@@ -31,9 +31,9 @@ func TestSuiIdentifier(t *testing.T) {
 	}
 
 	for _, id := range hexChainIds {
-		ch, _ := NewChainIdFromHex(id.chainId)
+		ch, _ := NewLChainIdFromHex(id.chainId)
 		switch typesCh := ch.(type) {
-		case SuiChainId:
+		case SuiLChainId:
 			equalStrings(t, id.expected, typesCh.Identifier())
 		default:
 			t.FailNow()

@@ -49,7 +49,9 @@ func (t Ecosystem) ToEcosystemHexByte() string {
 	return hex.EncodeToString([]byte{byte(t)})
 }
 
-type ChainId interface {
+// LChainId is the interface of a Lombard Chain Id, modeling the chain Ids defined according to the
+// Lombard internal specification
+type LChainId interface {
 	// String returns the hex encoding of the DestinationChainId with leading 0x
 	String() string
 
@@ -66,110 +68,110 @@ type ChainId interface {
 	Ecosystem() Ecosystem
 
 	// Equal reports whether a and be are the same
-	Equal(b ChainId) bool
+	Equal(b LChainId) bool
 }
 
-// NewChainId creates a new ChainId instance by accepting the bytes of the chain Id encoded
+// NewLChainId creates a new ChainId instance by accepting the bytes of the chain Id encoded
 // in Big Endian. Function returns an error if the chain Id is invalid or unsupported.
-func NewChainId(in []byte) (ChainId, error) {
+func NewLChainId(in []byte) (LChainId, error) {
 	if err := ValidateChainIdFromBytes(in); err != nil {
-		return nil, NewErrChainIdInvalid(err)
+		return nil, NewErrLChainIdInvalid(err)
 	}
 	out := make([]byte, ChainIdLength)
 	copy(out, in)
-	id := chainId{
+	id := lChainId{
 		inner: out,
 	}
 	switch id.Ecosystem() {
 	case EcosystemEVM:
-		return EVMChainId{
-			chainId: id,
+		return EVMLChainId{
+			lChainId: id,
 		}, nil
 	case EcosystemSui:
-		return SuiChainId{
-			chainId: id,
+		return SuiLChainId{
+			lChainId: id,
 		}, nil
 	case EcosystemBitcoin:
-		return BitcoinChainId{
-			chainId: id,
+		return BitcoinLChainId{
+			lChainId: id,
 		}, nil
 	default:
 		return nil, fmt.Errorf("chainid package is broken, validate accepted an unsupported chain")
 	}
 }
 
-// NewChainIdFromHex creates a new ChainId instance by accepting an hex string of the chain Id.
+// NewLChainIdFromHex creates a new ChainId instance by accepting an hex string of the chain Id.
 // Hex string can be passed both with and without the leading 0x.
 // Function returns an error if the chain Id is invalid or unsupported.
-func NewChainIdFromHex(s string) (ChainId, error) {
+func NewLChainIdFromHex(s string) (LChainId, error) {
 	decoded, err := hex.DecodeString(strings.TrimPrefix(s, "0x"))
 	if err != nil {
-		return nil, NewErrChainIdInvalid(err)
+		return nil, NewErrLChainIdInvalid(err)
 	}
-	return NewChainId(decoded)
+	return NewLChainId(decoded)
 }
 
-// chainId is the base implementation providing basic feature all chain ids implement
-type chainId struct {
+// lChainId is the base implementation providing basic feature all chain ids implement
+type lChainId struct {
 	inner []byte
 }
 
-// NewChainId creates a new ChainId instance by accepting the bytes of the chain Id encoded
+// newLChainId creates a new ChainId instance by accepting the bytes of the chain Id encoded
 // in Big Endian. Function returns an error if the chain Id is invalid or unsupported.
-func newChainId(in []byte) (*chainId, error) {
+func newLChainId(in []byte) (*lChainId, error) {
 	if err := ValidateChainIdFromBytes(in); err != nil {
-		return nil, NewErrChainIdInvalid(err)
+		return nil, NewErrLChainIdInvalid(err)
 	}
 	out := make([]byte, ChainIdLength)
 	copy(out, in)
-	return &chainId{
+	return &lChainId{
 		inner: out,
 	}, nil
 }
 
-// NewChainIdFromHex creates a new ChainId instance by accepting an hex string of the chain Id.
+// newLChainIdFromHex creates a new ChainId instance by accepting an hex string of the chain Id.
 // Hex string can be passed both with and without the leading 0x.
 // Function returns an error if the chain Id is invalid or unsupported.
-func newChainIdFromHex(s string) (*chainId, error) {
+func newLChainIdFromHex(s string) (*lChainId, error) {
 	decoded, err := hex.DecodeString(strings.TrimPrefix(s, "0x"))
 	if err != nil {
-		return nil, NewErrChainIdInvalid(err)
+		return nil, NewErrLChainIdInvalid(err)
 	}
-	return newChainId(decoded)
+	return newLChainId(decoded)
 }
 
 // String returns the hex encoding of the DestinationChainId with leading 0x
-func (a chainId) String() string {
+func (a lChainId) String() string {
 	return "0x" + a.Hex()
 }
 
 // Hex returns the hex encoding of the DestinationChainId without leading 0x
-func (a chainId) Hex() string {
+func (a lChainId) Hex() string {
 	return hex.EncodeToString(a.inner)
 }
 
 // Bytes returns a copy of the bytes of the ChainId (BigEndian)
-func (a chainId) Bytes() []byte {
+func (a lChainId) Bytes() []byte {
 	out := make([]byte, ChainIdLength)
 	copy(out, a.inner)
 	return out
 }
 
 // FixedBytes returns a copy of the bytes of the ChainId (BigEndian) as an array rather than slice
-func (a chainId) FixedBytes() [ChainIdLength]byte {
+func (a lChainId) FixedBytes() [ChainIdLength]byte {
 	var out [ChainIdLength]byte
 	copy(out[:], a.inner)
 	return out
 }
 
 // Ecosystem returns the Ecosystem the ChainId belongs to.
-func (a chainId) Ecosystem() Ecosystem {
+func (a lChainId) Ecosystem() Ecosystem {
 	// Saved in big endian so MSB is in position 0
 	return Ecosystem(a.inner[0])
 }
 
 // Equal reports whether a and be are the same
-func (a chainId) Equal(b ChainId) bool {
+func (a lChainId) Equal(b LChainId) bool {
 	return bytes.Equal(a.inner, b.Bytes())
 }
 
@@ -185,20 +187,20 @@ func ValidateChainIdFromBytes(chainIdBytes []byte) error {
 	return nil
 }
 
-// UnsafeChainId provides non-validated ChainId implementation which does not provide the consistency
+// UnsafeLChainId provides non-validated ChainId implementation which does not provide the consistency
 // guarantees of a ChainId following the specification. This is useful for testing purposes or for
 // proof of concepts of new chain integration before a PR is submitted to this codebase.
-type UnsafeChainId struct {
-	chainId
+type UnsafeLChainId struct {
+	lChainId
 }
 
-// NewUnsafeChainId returns a new instance of UnsafeChainId. No check is performed on the input and
+// NewUnsafeLChainId returns a new instance of UnsafeChainId. No check is performed on the input and
 // calls to the resulting object are not guaranteed to not panic if input is not checked externally.
 // Also, the input byte is not copied, so any change to the array of the underlying slice will be
 // reflected on the UnsafeChainId behavior.
-func NewUnsafeChainId(in []byte) UnsafeChainId {
-	return UnsafeChainId{
-		chainId: chainId{
+func NewUnsafeLChainId(in []byte) UnsafeLChainId {
+	return UnsafeLChainId{
+		lChainId: lChainId{
 			inner: in,
 		},
 	}

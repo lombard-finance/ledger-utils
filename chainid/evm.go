@@ -2,23 +2,23 @@ package chainid
 
 import "strings"
 
-type EVMChainId struct {
-	chainId
+type EVMLChainId struct {
+	lChainId
 }
 
-// NewEVMChainId returns a new ChainId instance for the provided chain Id.
+// NewEVMLChainId returns a new LChainId instance for the provided chain Id.
 // Chain Id must be provided in hex form eith either with or w/o the leading 0x
-func NewEVMChainId(id string) (*EVMChainId, error) {
+func NewEVMLChainId(id string) (*EVMLChainId, error) {
 	trimmed := strings.TrimPrefix(id, "0x")
 	if len(trimmed) > ChainIdLength*2 {
 		return nil, NewErrLenght(ChainIdLength, len(trimmed))
 	}
-	var innerChainId *chainId
+	var innerChainId *lChainId
 	var err error
 	if len(trimmed) == 64 {
-		innerChainId, err = newChainIdFromHex(EcosystemEVM.ToEcosystemHexByte() + trimmed[2:])
+		innerChainId, err = newLChainIdFromHex(EcosystemEVM.ToEcosystemHexByte() + trimmed[2:])
 	} else {
-		innerChainId, err = newChainIdFromHex(
+		innerChainId, err = newLChainIdFromHex(
 			EcosystemEVM.ToEcosystemHexByte() +
 				repeated64Zeros[len(trimmed)+2:] +
 				trimmed,
@@ -27,58 +27,58 @@ func NewEVMChainId(id string) (*EVMChainId, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &EVMChainId{chainId: *innerChainId}, nil
+	return &EVMLChainId{lChainId: *innerChainId}, nil
 }
 
-// NewEVMEthereumChainId returns the ChainId for the Ethereum blockchain (0x1)
-func NewEVMEthereumChainId() EVMChainId {
-	return EVMChainId{
-		chainId{
+// NewEVMEthereumLChainId returns the LChainId for the Ethereum blockchain (0x1)
+func NewEVMEthereumLChainId() EVMLChainId {
+	return EVMLChainId{
+		lChainId{
 			inner: []byte{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x1},
 		},
 	}
 }
 
-// NewEVMHoleskyChainId returns the ChainId for the Ethereum Holesky blockchain (0x4268)
-func NewEVMHoleskyChainId() EVMChainId {
-	return EVMChainId{
-		chainId{
+// NewEVMHoleskyLChainId returns the LChainId for the Ethereum Holesky blockchain (0x4268)
+func NewEVMHoleskyLChainId() EVMLChainId {
+	return EVMLChainId{
+		lChainId{
 			inner: []byte{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x42, 0x68},
 		},
 	}
 }
 
-// NewEVMSepoliaChainId returns the ChainId for the Ethereum Sepolia blockchain (0xaa36a7)
-func NewEVMSepoliaChainId() EVMChainId {
-	return EVMChainId{
-		chainId{
+// NewEVMSepoliaLChainId returns the LChainId for the Ethereum Sepolia blockchain (0xaa36a7)
+func NewEVMSepoliaLChainId() EVMLChainId {
+	return EVMLChainId{
+		lChainId{
 			inner: []byte{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xaa, 0x36, 0xa7},
 		},
 	}
 }
 
-// NewEVMBinanceSmartChainChainId returns the ChainId for the Binance Smart Chain blockchain (0x38)
-func NewEVMBinanceSmartChainChainId() EVMChainId {
-	return EVMChainId{
-		chainId{
+// NewEVMBinanceSmartChainLChainId returns the LChainId for the Binance Smart Chain blockchain (0x38)
+func NewEVMBinanceSmartChainLChainId() EVMLChainId {
+	return EVMLChainId{
+		lChainId{
 			inner: []byte{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x38},
 		},
 	}
 }
 
-// NewEVMBaseChainId returns the ChainId for the Base blockchain (0x2105)
-func NewEVMBaseChainId() EVMChainId {
-	return EVMChainId{
-		chainId{
+// NewEVMBaseLChainId returns the LChainId for the Base blockchain (0x2105)
+func NewEVMBaseLChainId() EVMLChainId {
+	return EVMLChainId{
+		lChainId{
 			inner: []byte{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x21, 0x05},
 		},
 	}
 }
 
-// NewEVMBaseSepoliaChainId returns the ChainId for the Base Sepolia blockchain (0x14a34)
-func NewEVMBaseSepoliaChainId() EVMChainId {
-	return EVMChainId{
-		chainId{
+// NewEVMBaseSepoliaLChainId returns the LChainId for the Base Sepolia blockchain (0x14a34)
+func NewEVMBaseSepoliaLChainId() EVMLChainId {
+	return EVMLChainId{
+		lChainId{
 			inner: []byte{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x1, 0x4a, 0x34},
 		},
 	}

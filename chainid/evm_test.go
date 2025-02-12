@@ -13,9 +13,9 @@ func TestEVMIdentifier(t *testing.T) {
 	}
 
 	for _, id := range hexChainIds {
-		ch, _ := NewChainIdFromHex(id)
+		ch, _ := NewLChainIdFromHex(id)
 		switch ch.(type) {
-		case EVMChainId:
+		case EVMLChainId:
 		default:
 			t.FailNow()
 		}

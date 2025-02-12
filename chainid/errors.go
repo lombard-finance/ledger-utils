@@ -2,16 +2,16 @@ package chainid
 
 import "fmt"
 
-var ErrChainIdInvalid = fmt.Errorf("invalid chain id")
+var ErrLChainIdInvalid = fmt.Errorf("invalid chain id")
 
-func NewErrChainIdInvalid(reason error) error {
-	return fmt.Errorf("%w: %w", ErrChainIdInvalid, reason)
+func NewErrLChainIdInvalid(reason error) error {
+	return fmt.Errorf("%w: %w", ErrLChainIdInvalid, reason)
 }
 
 var ErrLength = fmt.Errorf("wrong length")
 
 func NewErrLenght(expected int, actual int) error {
-	return NewErrChainIdInvalid(fmt.Errorf(
+	return NewErrLChainIdInvalid(fmt.Errorf(
 		"%w: expected %d bytes, got %d",
 		ErrLength, expected, actual,
 	))
@@ -20,7 +20,7 @@ func NewErrLenght(expected int, actual int) error {
 var ErrUnsupportedEcosystem = fmt.Errorf("unsupported ecosystem")
 
 func NewErrUnsupportedEcosystem(e byte) error {
-	return NewErrChainIdInvalid(
+	return NewErrLChainIdInvalid(
 		fmt.Errorf("%w: %d", ErrUnsupportedEcosystem, e),
 	)
 }
