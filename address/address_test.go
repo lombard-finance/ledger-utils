@@ -79,7 +79,7 @@ func TestSuiAddress(t *testing.T) {
 		common.AssertNoError(t, err)
 		common.EqualStrings(t, validAddressString, addr.String())
 		equalEcosystem(t, chainid.EcosystemSui, addr.Ecosystem())
-		common.AssertTrue(t, address.EvmAddressLength == addr.Length())
+		common.AssertTrue(t, address.SuiAddressLength == addr.Length())
 		// Same address without leading 0x
 		addrNo0x, err := address.NewSuiAddressFromHex(validAddressString[2:])
 		common.AssertNoError(t, err)

@@ -168,7 +168,7 @@ func (s *SuiAddress) Bytes() []byte {
 }
 
 func (s *SuiAddress) Length() int {
-	return EvmAddressLength
+	return SuiAddressLength
 }
 
 func (s *SuiAddress) Ecosystem() chainid.Ecosystem {
