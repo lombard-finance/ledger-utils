@@ -96,6 +96,16 @@ func TestLChainId(t *testing.T) {
 	}
 }
 
+func TestGenericLChainId(t *testing.T) {
+	unsupportedChainIdHex := "0x1100000000000000000000000000000000000000000000000000000000000001"
+	mayBeGeneric, err := chainid.NewLChainIdFromHex(unsupportedChainIdHex)
+	common.AssertNoError(t, err)
+	genericChainId, ok := mayBeGeneric.(chainid.GenericLChainId)
+	common.AssertTrue(t, ok)
+	common.EqualStrings(t, genericChainId.String(), unsupportedChainIdHex)
+	common.AssertTrue(t, genericChainId.Ecosystem() == 17)
+}
+
 func TestLChainIdErrorConditions(t *testing.T) {
 	correctHex := "0x0000000000000000000000000000000000000000000000000000000000000001"
 	longerHex := correctHex + "01"
@@ -104,9 +114,6 @@ func TestLChainIdErrorConditions(t *testing.T) {
 	longerBytes, _ := hex.DecodeString(longerHex)
 	_, err = chainid.NewLChainId(longerBytes)
 	common.AssertError(t, err, chainid.ErrLChainIdInvalid, chainid.ErrLength)
-	unsupportedEcosystemChainId := "0x11" + correctHex[4:]
-	_, err = chainid.NewLChainIdFromHex(unsupportedEcosystemChainId)
-	common.AssertError(t, err, chainid.ErrLChainIdInvalid, chainid.ErrUnsupportedEcosystem)
 	badCharChainId := "0xY0" + correctHex[4:]
 	_, err = chainid.NewLChainIdFromHex(badCharChainId)
 	common.AssertError(t, err, chainid.ErrLChainIdInvalid)

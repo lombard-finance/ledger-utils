@@ -29,11 +29,12 @@ func (t Ecosystem) String() string {
 	case EcosystemBitcoin:
 		return "bitcoin"
 	default:
-		return fmt.Sprintf("unsupported ecosystem %d", t)
+		return fmt.Sprintf("ecosystem %d", t)
 	}
 }
 
-// IsSupported reports whether the Ecosystem is among the supported ones.
+// IsSupported reports whether the Ecosystem is among the supported ones, which means a
+// specialized ecosystem type is available in the package
 func (t Ecosystem) IsSupported() bool {
 	switch t {
 	case EcosystemEVM:
@@ -96,7 +97,9 @@ func NewLChainId(in []byte) (LChainId, error) {
 			lChainId: id,
 		}, nil
 	default:
-		return nil, fmt.Errorf("chainid package is broken, validate accepted an unsupported chain")
+		return GenericLChainId{
+			lChainId: id,
+		}, nil
 	}
 }
 
@@ -181,27 +184,11 @@ func ValidateChainIdFromBytes(chainIdBytes []byte) error {
 	if len(chainIdBytes) != ChainIdLength {
 		return NewErrLenght(ChainIdLength, len(chainIdBytes))
 	}
-	if !Ecosystem(chainIdBytes[0]).IsSupported() {
-		return NewErrUnsupportedEcosystem(chainIdBytes[0])
-	}
 	return nil
 }
 
-// UnsafeLChainId provides non-validated ChainId implementation which does not provide the consistency
-// guarantees of a ChainId following the specification. This is useful for testing purposes or for
-// proof of concepts of new chain integration before a PR is submitted to this codebase.
-type UnsafeLChainId struct {
+// GenericLChainId provides base functionalities of the Lombard Chain Id without any check on the
+// supported ecosystem.
+type GenericLChainId struct {
 	lChainId
-}
-
-// NewUnsafeLChainId returns a new instance of UnsafeChainId. No check is performed on the input and
-// calls to the resulting object are not guaranteed to not panic if input is not checked externally.
-// Also, the input byte is not copied, so any change to the array of the underlying slice will be
-// reflected on the UnsafeChainId behavior.
-func NewUnsafeLChainId(in []byte) UnsafeLChainId {
-	return UnsafeLChainId{
-		lChainId: lChainId{
-			inner: in,
-		},
-	}
 }
