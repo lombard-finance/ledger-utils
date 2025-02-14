@@ -4,8 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/lombard-finance/chain/chainid"
-	"github.com/lombard-finance/chain/common"
+	"github.com/lombard-finance/ledger-utils/chainid"
+	"github.com/lombard-finance/ledger-utils/common"
 )
 
 func TestSuiIdentifier(t *testing.T) {

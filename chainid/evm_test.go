@@ -3,7 +3,7 @@ package chainid_test
 import (
 	"testing"
 
-	"github.com/lombard-finance/chain/chainid"
+	"github.com/lombard-finance/ledger-utils/chainid"
 )
 
 func TestEVMIdentifier(t *testing.T) {

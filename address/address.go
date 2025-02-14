@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/lombard-finance/chain/chainid"
+	"github.com/lombard-finance/ledger-utils/chainid"
 )
 
 // compile time type assertion

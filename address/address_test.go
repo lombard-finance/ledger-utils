@@ -5,9 +5,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/lombard-finance/chain/address"
-	"github.com/lombard-finance/chain/chainid"
-	"github.com/lombard-finance/chain/common"
+	"github.com/lombard-finance/ledger-utils/address"
+	"github.com/lombard-finance/ledger-utils/chainid"
+	"github.com/lombard-finance/ledger-utils/common"
 )
 
 func TestNewAddress(t *testing.T) {
