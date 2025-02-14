@@ -116,6 +116,32 @@ func TestSuiAddress(t *testing.T) {
 	})
 }
 
+func TestGenericAddress(t *testing.T) {
+	validAddressString := "0xbfde966bacd4260852155f7b523ef157f0b75a0e1e8a0784e463c3ef0bb69deb"
+	ecosystem := chainid.Ecosystem(10)
+	anotherValidAddressString := "0x3e8e9423d80e1774a7ca128fccd8bf5f1f7753be658c5e645929037f7c819040"
+	anotherEcosystem := chainid.Ecosystem(11)
+
+	t.Run("should create address from valid hex addresses", func(t *testing.T) {
+		addr, err := address.NewGenericAddressFromHex(validAddressString, ecosystem)
+		common.AssertNoError(t, err)
+		common.EqualStrings(t, validAddressString, addr.String())
+		equalEcosystem(t, ecosystem, addr.Ecosystem())
+		// Same address without leading 0x
+		addrNo0x, err := address.NewGenericAddressFromHex(validAddressString[2:], ecosystem)
+		common.AssertNoError(t, err)
+		common.AssertTrue(t, addr.Equal(addrNo0x))
+		// Check with different addresses
+		differentAddr, err := address.NewGenericAddressFromHex(anotherValidAddressString, anotherEcosystem)
+		common.AssertNoError(t, err)
+		common.AssertFalse(t, differentAddr.Equal(addr))
+		// Check with different addresses same ecosystem
+		differentAddr, err = address.NewGenericAddressFromHex(anotherValidAddressString, ecosystem)
+		common.AssertNoError(t, err)
+		common.AssertFalse(t, differentAddr.Equal(addr))
+	})
+}
+
 func equalEcosystem(t *testing.T, expected chainid.Ecosystem, actual chainid.Ecosystem) {
 	if expected != actual {
 		t.Errorf("expected: %s actual: %s", expected.String(), actual.String())

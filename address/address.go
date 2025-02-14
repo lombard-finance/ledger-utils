@@ -12,6 +12,7 @@ import (
 // compile time type assertion
 var _ Address = &EvmAddress{}
 var _ Address = &SuiAddress{}
+var _ Address = &GenericAddress{}
 
 // The Address interface serves as a unique gateway to addresses of all chains. In fact each library may treat
 // addresses in different manners and with different assumptions. So we try to unify all of them.
@@ -45,7 +46,7 @@ func NewAddress(b []byte, e chainid.Ecosystem) (Address, error) {
 	case chainid.EcosystemSui:
 		return NewSuiAddress(b)
 	default:
-		return nil, fmt.Errorf("%w: %s", ErrUnsupportedEcosystem, e.String())
+		return NewGenericAddress(b, e), nil
 	}
 }
 
@@ -197,4 +198,57 @@ func (a1 *SuiAddress) Equal(a2 Address) bool {
 		return false
 	}
 	return bytes.Equal(a1.inner[:], a2AsSui.inner[:])
+}
+
+// GenericAddress does not enforce any ecosystem specific check, leaving to the caller
+// the need to check ecosystem requirements
+type GenericAddress struct {
+	inner     []byte
+	ecosystem chainid.Ecosystem
+}
+
+func NewGenericAddress(b []byte, e chainid.Ecosystem) *GenericAddress {
+	a := &GenericAddress{
+		inner:     make([]byte, len(b)),
+		ecosystem: e,
+	}
+	copy(a.inner, b)
+	return a
+}
+
+func NewGenericAddressFromHex(address string, e chainid.Ecosystem) (*GenericAddress, error) {
+	b, err := hex.DecodeString(strings.TrimPrefix(address, "0x"))
+	if err != nil {
+		return nil, fmt.Errorf("%w: hex decoding error %w", ErrBadAddress, err)
+	}
+	return NewGenericAddress(b, e), nil
+}
+
+func (a *GenericAddress) String() string {
+	return "0x" + a.Hex()
+}
+
+func (a *GenericAddress) Hex() string {
+	return hex.EncodeToString(a.inner)
+}
+
+func (a *GenericAddress) Bytes() []byte {
+	buf := make([]byte, len(a.inner))
+	copy(buf, a.inner)
+	return buf
+}
+
+func (a *GenericAddress) Length() int {
+	return len(a.inner)
+}
+
+func (a *GenericAddress) Ecosystem() chainid.Ecosystem {
+	return a.ecosystem
+}
+
+func (a1 *GenericAddress) Equal(a2 Address) bool {
+	if a2.Ecosystem() != a1.Ecosystem() {
+		return false
+	}
+	return bytes.Equal(a1.inner, a2.Bytes())
 }
