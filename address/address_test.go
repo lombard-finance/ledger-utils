@@ -47,9 +47,18 @@ func TestEVMAddress(t *testing.T) {
 		noChecksumAddr, err := address.NewEvmAddressFromHex(strings.ToLower(validAddressString))
 		common.AssertNoError(t, err)
 		common.AssertTrue(t, addr.Equal(noChecksumAddr))
+		// Create from longer byte
+		longerAddrBytes := append(noChecksumAddr.Bytes(), noChecksumAddr.Bytes()...)
+		addrFromLonger, err := address.NewEvmAddressTruncating(longerAddrBytes)
+		common.AssertNoError(t, err)
+		common.AssertTrue(t, addrFromLonger.Equal(noChecksumAddr))
+		// Error on shorter bytes
+		_, err = address.NewEvmAddressTruncating(longerAddrBytes[:10])
+		common.AssertError(t, err, address.ErrBadAddress, address.ErrBadAddressEvm)
 	})
 
 	t.Run("should reject invalid addresses", func(t *testing.T) {
+
 		// shorter address
 		_, err := address.NewEvmAddressFromHex(validAddressString[5:])
 		common.AssertError(t, err, address.ErrBadAddress, address.ErrBadAddressEvm)

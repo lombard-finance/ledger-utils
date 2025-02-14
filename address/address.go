@@ -90,6 +90,19 @@ func NewEvmAddressFromHex(address string) (*EvmAddress, error) {
 	return NewEvmAddress(decoded)
 }
 
+// NewEvmAddressTruncating creates a new EvmAddress from a byte slice which is longer than
+// EvmAddressLength by truncating most significant bytes. This is useful when creating an
+// address from a event topic which is always 32 bytes long.
+func NewEvmAddressTruncating(b []byte) (*EvmAddress, error) {
+	if len(b) < EvmAddressLength {
+		return nil, fmt.Errorf("%w: invalid length, given %d, expected at least %d", ErrBadAddressEvm, len(b), EvmAddressLength)
+	}
+
+	a := &EvmAddress{}
+	copy(a.inner[:], b[len(b)-EvmAddressLength:])
+	return a, nil
+}
+
 func (a *EvmAddress) String() string {
 	return "0x" + a.Hex()
 }
