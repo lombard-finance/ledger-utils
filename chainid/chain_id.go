@@ -188,7 +188,7 @@ func (a lChainId) Equal(b LChainId) bool {
 // ChainId instance. Ecosystem support is also verified.
 func ValidateChainIdFromBytes(chainIdBytes []byte) error {
 	if len(chainIdBytes) != ChainIdLength {
-		return NewErrLenght(ChainIdLength, len(chainIdBytes))
+		return NewErrLength(ChainIdLength, len(chainIdBytes))
 	}
 	return nil
 }

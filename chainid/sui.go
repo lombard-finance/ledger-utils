@@ -34,7 +34,7 @@ func NewSuiTestnetLChainId() SuiLChainId {
 func NewSuiLChainId(identifier string) (*SuiLChainId, error) {
 	trimmed := strings.TrimPrefix(identifier, "0x")
 	if len(trimmed) != SuiIdentifierLength*2 {
-		return nil, NewErrLenght(SuiIdentifierLength, len(trimmed))
+		return nil, NewErrLength(SuiIdentifierLength, len(trimmed))
 	}
 	chainid, err := newLChainIdFromHex(EcosystemSui.ToEcosystemHexByte() + repeated64Zeros[SuiIdentifierLength*2+2:] + trimmed)
 	if err != nil {

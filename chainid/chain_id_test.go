@@ -177,6 +177,16 @@ func TestLChainIdFactories(t *testing.T) {
 			func(in string) (chainid.LChainId, error) { return chainid.NewSuiLChainId(in) },
 			func() chainid.LChainId { return chainid.NewSuiTestnetLChainId() },
 		},
+		{
+			"5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d",
+			func(in string) (chainid.LChainId, error) { return chainid.NewSolanaLChainId(in) },
+			func() chainid.LChainId { return chainid.NewSolanaMainnetLChainId() },
+		},
+		{
+			"EtWTRABZaYq6iMfeYKouRu166VU2xqa1wcaWoxPkrZBG",
+			func(in string) (chainid.LChainId, error) { return chainid.NewSolanaLChainId(in) },
+			func() chainid.LChainId { return chainid.NewSolanaDevnetLChainId() },
+		},
 	}
 	for _, tt := range tests {
 		chainIdFromFactory, err := tt.factory(tt.identifier)
