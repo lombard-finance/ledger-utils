@@ -1,3 +1,5 @@
+# [v0.2.0](https://github.com/lombard-finance/chain/releases/tag/v0.2.0)
+- Remove support enforcement on `ledger-utils` side by introducing `GenericLChainId` and `GenericAddress` types
 # [v0.1.2](https://github.com/lombard-finance/chain/releases/tag/v0.1.2)
 - Add `NewEvmAddressTruncating` to create address from longer byte slice
 # [v0.1.1](https://github.com/lombard-finance/chain/releases/tag/v0.1.1)
