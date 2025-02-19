@@ -66,6 +66,18 @@ func TestLChainId(t *testing.T) {
 			func() chainid.LChainId { return chainid.NewSuiTestnetLChainId() },
 		},
 		{
+			"Solana",
+			"0x02296998a6f8e2a784db5d9f95e18fc23f70441a1039446801089879b08c7ef0",
+			chainid.EcosystemSolana,
+			func() chainid.LChainId { return chainid.NewSolanaMainnetLChainId() },
+		},
+		{
+			"Solana Devnet",
+			"0x0259db5080fc2c6d3bcf7ca90712d3c2e5e6c28f27f0dfbb9953bdb0894c03ab",
+			chainid.EcosystemSolana,
+			func() chainid.LChainId { return chainid.NewSolanaDevnetLChainId() },
+		},
+		{
 			"Bitcoin",
 			"0xff0000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f",
 			chainid.EcosystemBitcoin,

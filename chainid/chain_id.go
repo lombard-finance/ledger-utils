@@ -17,6 +17,7 @@ type Ecosystem uint8
 const (
 	EcosystemEVM     Ecosystem = 0
 	EcosystemSui     Ecosystem = 1
+	EcosystemSolana  Ecosystem = 2
 	EcosystemBitcoin Ecosystem = 255
 )
 
@@ -40,6 +41,7 @@ func (t Ecosystem) IsSupported() bool {
 	case EcosystemEVM:
 	case EcosystemSui:
 	case EcosystemBitcoin:
+	case EcosystemSolana:
 	default:
 		return false
 	}
@@ -94,6 +96,10 @@ func NewLChainId(in []byte) (LChainId, error) {
 		}, nil
 	case EcosystemBitcoin:
 		return BitcoinLChainId{
+			lChainId: id,
+		}, nil
+	case EcosystemSolana:
+		return SolanaLChainId{
 			lChainId: id,
 		}, nil
 	default:
