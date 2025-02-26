@@ -1,0 +1,23 @@
+#!/usr/bin/make -f
+
+test:
+	go test ./...
+
+clean:
+	go clean -testcache
+
+###############################################################################
+###                                 RELEASE                                 ###
+###############################################################################
+
+# create tag and publish it
+create-release:
+ifneq ($(strip $(TAG)),)
+	@echo "--> Running release for tag: $(TAG)"
+	@echo "--> Create release tag: $(TAG)"
+	git tag $(TAG)
+	git push origin $(TAG)
+	@echo "--> Done creating release tag: $(TAG)"
+else
+	@echo "--> No tag specified, skipping create-release"
+endif
