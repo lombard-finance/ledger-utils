@@ -11,7 +11,7 @@ type EVMLChainId struct {
 func NewEVMLChainId(id string) (*EVMLChainId, error) {
 	trimmed := strings.TrimPrefix(id, "0x")
 	if len(trimmed) > ChainIdLength*2 {
-		return nil, NewErrLenght(ChainIdLength, len(trimmed))
+		return nil, NewErrLength(ChainIdLength, len(trimmed))
 	}
 	var innerChainId *lChainId
 	var err error

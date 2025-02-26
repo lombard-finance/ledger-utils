@@ -10,7 +10,7 @@ func NewErrLChainIdInvalid(reason error) error {
 
 var ErrLength = fmt.Errorf("wrong length")
 
-func NewErrLenght(expected int, actual int) error {
+func NewErrLength(expected int, actual int) error {
 	return NewErrLChainIdInvalid(fmt.Errorf(
 		"%w: expected %d bytes, got %d",
 		ErrLength, expected, actual,
