@@ -9,7 +9,9 @@ jobs:
   tag:
     runs-on: [self-hosted]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+        with:
+          fetch-tags: true
       - name: Create Tag
         run: |
           LATEST_TAG=$(git describe --tags --abbrev=0)
