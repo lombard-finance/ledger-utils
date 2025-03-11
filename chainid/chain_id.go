@@ -27,6 +27,8 @@ func (t Ecosystem) String() string {
 		return "evm"
 	case EcosystemSui:
 		return "sui"
+	case EcosystemSolana:
+		return "solana"
 	case EcosystemBitcoin:
 		return "bitcoin"
 	default:
@@ -40,8 +42,8 @@ func (t Ecosystem) IsSupported() bool {
 	switch t {
 	case EcosystemEVM:
 	case EcosystemSui:
-	case EcosystemBitcoin:
 	case EcosystemSolana:
+	case EcosystemBitcoin:
 	default:
 		return false
 	}
