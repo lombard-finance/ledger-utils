@@ -6,7 +6,8 @@ import (
 	"strings"
 )
 
-var ErrEmptyChainId = fmt.Errorf("cannot create Lombard chain Id from empty chain id")
+var ErrEmptyCosmosChainId = fmt.Errorf("cannot create Lombard chain Id from empty cosmos chain id")
+var ErrInvalidCosmosChainId = fmt.Errorf("chain id is not valid")
 
 type CosmosLChainId struct {
 	lChainId
@@ -18,7 +19,11 @@ type CosmosLChainId struct {
 // The resulting Lombard Chain Id is the hash of such chain name with its MSB replaced by the ecosystem byte
 func NewCosmosLChainId(chainId string) (*CosmosLChainId, error) {
 	if chainId == "" {
-		return nil, ErrEmptyChainId
+		return nil, fmt.Errorf("%w: %w", ErrInvalidCosmosChainId, ErrEmptyCosmosChainId)
+	}
+	lastDashPosition := strings.LastIndex(chainId, "-")
+	if lastDashPosition == -1 {
+		return nil, fmt.Errorf("%w: cannot find counter in provided chain id", ErrInvalidCosmosChainId)
 	}
 	chainName := chainId[0:strings.LastIndex(chainId, "-")]
 	hashedChainName := sha256.Sum256([]byte(chainName))
