@@ -32,8 +32,6 @@ func (t Ecosystem) String() string {
 		return "solana"
 	case EcosystemCosmos:
 		return "cosmos"
-	case EcosystemSolana:
-		return "solana"
 	case EcosystemBitcoin:
 		return "bitcoin"
 	default:
