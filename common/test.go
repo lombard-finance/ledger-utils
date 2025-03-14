@@ -27,13 +27,13 @@ func AssertError(t *testing.T, err error, errorTypes ...error) {
 
 func AssertTrue(t *testing.T, value bool) {
 	if !value {
-		t.FailNow()
+		t.Error("expected true, given false")
 	}
 }
 
 func AssertFalse(t *testing.T, value bool) {
 	if value {
-		t.FailNow()
+		t.Error("expected false, given true")
 	}
 }
 
@@ -45,6 +45,6 @@ func EqualStrings(t *testing.T, expected string, actual string) {
 
 func EqualBytes(t *testing.T, expected []byte, actual []byte) {
 	if !bytes.Equal(expected, actual) {
-		t.Errorf("expected: %s actual: %s", expected, actual)
+		t.Errorf("expected: %x actual: %x", expected, actual)
 	}
 }

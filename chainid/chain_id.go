@@ -18,6 +18,7 @@ const (
 	EcosystemEVM     Ecosystem = 0
 	EcosystemSui     Ecosystem = 1
 	EcosystemSolana  Ecosystem = 2
+	EcosystemCosmos  Ecosystem = 3
 	EcosystemBitcoin Ecosystem = 255
 )
 
@@ -29,6 +30,8 @@ func (t Ecosystem) String() string {
 		return "sui"
 	case EcosystemSolana:
 		return "solana"
+	case EcosystemCosmos:
+		return "cosmos"
 	case EcosystemBitcoin:
 		return "bitcoin"
 	default:
@@ -44,6 +47,7 @@ func (t Ecosystem) IsSupported() bool {
 	case EcosystemSui:
 	case EcosystemSolana:
 	case EcosystemBitcoin:
+	case EcosystemCosmos:
 	default:
 		return false
 	}
@@ -102,6 +106,10 @@ func NewLChainId(in []byte) (LChainId, error) {
 		}, nil
 	case EcosystemSolana:
 		return SolanaLChainId{
+			lChainId: id,
+		}, nil
+	case EcosystemCosmos:
+		return CosmosLChainId{
 			lChainId: id,
 		}, nil
 	default:
@@ -187,7 +195,7 @@ func (a lChainId) Equal(b LChainId) bool {
 }
 
 // ValidateChainIdFromBytes validates if a slice of bytes can be used to create a valid
-// ChainId instance. Ecosystem support is also verified.
+// ChainId instance.
 func ValidateChainIdFromBytes(chainIdBytes []byte) error {
 	if len(chainIdBytes) != ChainIdLength {
 		return NewErrLength(ChainIdLength, len(chainIdBytes))

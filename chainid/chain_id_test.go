@@ -187,6 +187,21 @@ func TestLChainIdFactories(t *testing.T) {
 			func(in string) (chainid.LChainId, error) { return chainid.NewSolanaLChainId(in) },
 			func() chainid.LChainId { return chainid.NewSolanaDevnetLChainId() },
 		},
+		{
+			"ledger-mainnet-1",
+			func(in string) (chainid.LChainId, error) { return chainid.NewCosmosLChainId(in) },
+			func() chainid.LChainId { return chainid.NewLombardLedgerLChainId() },
+		},
+		{
+			"osmosis-1",
+			func(in string) (chainid.LChainId, error) { return chainid.NewCosmosLChainId(in) },
+			func() chainid.LChainId { return chainid.NewOsmosisLChainId() },
+		},
+		{
+			"cosmoshub-4",
+			func(in string) (chainid.LChainId, error) { return chainid.NewCosmosLChainId(in) },
+			func() chainid.LChainId { return chainid.NewCosmosHubLChainId() },
+		},
 	}
 	for _, tt := range tests {
 		chainIdFromFactory, err := tt.factory(tt.identifier)
