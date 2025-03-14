@@ -1,6 +1,10 @@
 package chainid
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/lombard-finance/ledger-utils/common"
+)
 
 type EVMLChainId struct {
 	lChainId
@@ -20,7 +24,7 @@ func NewEVMLChainId(id string) (*EVMLChainId, error) {
 	} else {
 		innerChainId, err = newLChainIdFromHex(
 			EcosystemEVM.ToEcosystemHexByte() +
-				repeated64Zeros[len(trimmed)+2:] +
+				common.Repeated64Zeros[len(trimmed)+2:] +
 				trimmed,
 		)
 	}

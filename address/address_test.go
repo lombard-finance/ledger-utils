@@ -15,6 +15,8 @@ func TestNewAddress(t *testing.T) {
 	evmAddressString := "0x8236a87084f8B84306f72007F36F2618A5634494"
 	suiAddressString := "0xbfde966bacd4260852155f7b523ef157f0b75a0e1e8a0784e463c3ef0bb69deb"
 	solanaAddressString := "14grJpemFaf88c8tiVb77W7TYg2W3ir6pfkKz3YjhhZ5"
+	cosmosAddressString20Bytes := "4AF2A0E44F9CD6F5E2FD5F0C06BC230AF3EF688C"
+	cosmosAddressString32Bytes := "1A9568EC8F8E3F6740E1BCAE9C6233256812C4B775AEF4BE8E913EAF76243E1D"
 	genericValidAddressString := "0x3e8e9423d80e1774a7ca128fccd8bf5f1f7753be658c5e645929037f7c819040889955ef"
 	anotherEcosystem := chainid.Ecosystem(11)
 
@@ -41,6 +43,16 @@ func TestNewAddress(t *testing.T) {
 	solanaAddress, err := address.NewAddressFromString(solanaAddressString, chainid.EcosystemSolana)
 	common.AssertNoError(t, err)
 	_, ok = solanaAddress.(*address.SolanaAddress)
+	common.AssertTrue(t, ok)
+
+	cosmosAddress, err := address.NewAddressFromString(cosmosAddressString20Bytes, chainid.EcosystemCosmos)
+	common.AssertNoError(t, err)
+	_, ok = cosmosAddress.(*address.CosmosAddress)
+	common.AssertTrue(t, ok)
+
+	cosmosAddress, err = address.NewAddressFromString(cosmosAddressString32Bytes, chainid.EcosystemCosmos)
+	common.AssertNoError(t, err)
+	_, ok = cosmosAddress.(*address.CosmosAddress)
 	common.AssertTrue(t, ok)
 
 	genericAddress, err := address.NewAddressFromString(genericValidAddressString, anotherEcosystem)
@@ -183,6 +195,41 @@ func TestSolanaAddress(t *testing.T) {
 		// special char
 		_, err = address.NewSolanaAddressFromBase58(validAddressString[:5] + "%" + validAddressString[6:])
 		common.AssertError(t, err, address.ErrBadAddress, address.ErrBadAddressSolana)
+	})
+}
+
+func TestCosmosAddress(t *testing.T) {
+	validAddressString20Hex := "4af2a0e44f9cd6f5e2fd5f0c06bc230af3ef688c"
+	validAddressString20HexWithZeroes := "0000000000000000000000004af2a0e44f9cd6f5e2fd5f0c06bc230af3ef688c"
+	validAddressString32Hex := "1a9568ec8f8e3f6740e1bcae9c6233256812c4b775aef4be8e913eaf76243e1d"
+
+	t.Run("should create valid addresses from valid strings", func(t *testing.T) {
+		addrBytes, _ := hex.DecodeString(validAddressString20Hex)
+		addr, err := address.NewCosmosAddress(addrBytes)
+		common.AssertNoError(t, err)
+		common.EqualStrings(t, validAddressString20Hex, addr.Hex())
+		equalEcosystem(t, chainid.EcosystemCosmos, addr.Ecosystem())
+		common.AssertTrue(t, len(validAddressString20Hex) == addr.Length()*2)
+		common.EqualBytes(t, addrBytes, addr.Bytes())
+
+		addrBytes, _ = hex.DecodeString(validAddressString32Hex)
+		addr, err = address.NewCosmosAddress(addrBytes)
+		common.AssertNoError(t, err)
+		common.EqualStrings(t, validAddressString32Hex, addr.Hex())
+		equalEcosystem(t, chainid.EcosystemCosmos, addr.Ecosystem())
+		common.AssertTrue(t, len(validAddressString32Hex) == addr.Length()*2)
+		common.EqualBytes(t, addrBytes, addr.Bytes())
+	})
+
+	t.Run("should crete same address between 20 bytes and 20 byte with leading zeroes", func(t *testing.T) {
+		addrBytes20, _ := hex.DecodeString(validAddressString20Hex)
+		addrBytes32, _ := hex.DecodeString(validAddressString20HexWithZeroes)
+		addr20, err := address.NewCosmosAddress(addrBytes20)
+		common.AssertNoError(t, err)
+		addr, err := address.NewCosmosAddress(addrBytes32)
+		common.AssertNoError(t, err)
+		common.AssertTrue(t, addr.Equal(addr20))
+		common.EqualBytes(t, addr.Bytes(), addr20.Bytes())
 	})
 }
 

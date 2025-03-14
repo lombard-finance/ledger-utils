@@ -3,6 +3,8 @@ package chainid
 import (
 	"encoding/hex"
 	"strings"
+
+	"github.com/lombard-finance/ledger-utils/common"
 )
 
 const SuiIdentifierLength = 4
@@ -36,7 +38,7 @@ func NewSuiLChainId(identifier string) (*SuiLChainId, error) {
 	if len(trimmed) != SuiIdentifierLength*2 {
 		return nil, NewErrLength(SuiIdentifierLength, len(trimmed))
 	}
-	chainid, err := newLChainIdFromHex(EcosystemSui.ToEcosystemHexByte() + repeated64Zeros[SuiIdentifierLength*2+2:] + trimmed)
+	chainid, err := newLChainIdFromHex(EcosystemSui.ToEcosystemHexByte() + common.Repeated64Zeros[SuiIdentifierLength*2+2:] + trimmed)
 	if err != nil {
 		return nil, err
 	}

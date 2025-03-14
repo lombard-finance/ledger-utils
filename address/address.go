@@ -10,7 +10,9 @@ import (
 )
 
 // compile time type assertion
+var _ Address = &CosmosAddress{}
 var _ Address = &EvmAddress{}
+var _ Address = &SolanaAddress{}
 var _ Address = &SuiAddress{}
 var _ Address = &GenericAddress{}
 
@@ -47,6 +49,8 @@ func NewAddress(b []byte, e chainid.Ecosystem) (Address, error) {
 		return NewSuiAddress(b)
 	case chainid.EcosystemSolana:
 		return NewSolanaAddress(b)
+	case chainid.EcosystemCosmos:
+		return NewCosmosAddress(b)
 	default:
 		return NewGenericAddress(b, e), nil
 	}
