@@ -3,6 +3,7 @@ package chainid
 import (
 	"crypto/sha256"
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -17,15 +18,23 @@ type CosmosLChainId struct {
 // in the Cosmos ecosystem may change based on the amount of time a chain has been restarted (e.g. cosmoshub-4) we only
 // consider what is referred as chain name, i.e., the chain id without the trailing dash and incrementing counter.
 // The resulting Lombard Chain Id is the hash of such chain name with its MSB replaced by the ecosystem byte
+// This factory method accepts both chain names and chain ids, stripping the chain counter in the case of chain id, while
+// using string as-is in case of chain names.
 func NewCosmosLChainId(chainId string) (*CosmosLChainId, error) {
 	if chainId == "" {
 		return nil, fmt.Errorf("%w: %w", ErrInvalidCosmosChainId, ErrEmptyCosmosChainId)
 	}
 	lastDashPosition := strings.LastIndex(chainId, "-")
-	if lastDashPosition == -1 {
-		return nil, fmt.Errorf("%w: cannot find counter in provided chain id", ErrInvalidCosmosChainId)
+	var chainName string
+	if lastDashPosition != -1 {
+		_, err := strconv.Atoi(chainId[lastDashPosition:])
+		if err != nil {
+			return nil, fmt.Errorf("%w: cannot find counter in provided chain id", ErrInvalidCosmosChainId)
+		}
+		chainName = chainId[0:lastDashPosition]
+	} else {
+		chainName = chainId
 	}
-	chainName := chainId[0:strings.LastIndex(chainId, "-")]
 	hashedChainName := sha256.Sum256([]byte(chainName))
 	// Replace MSB with cosmos ecosystem byte
 	hashedChainName[0] = byte(EcosystemCosmos)
