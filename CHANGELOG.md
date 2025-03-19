@@ -1,4 +1,6 @@
-# [v0.2.1](https://github.com/lombard-finance/chain/releases/tag/v0.2.0)
+# [v0.4.0](https://github.com/lombard-finance/chain/releases/tag/v0.4.0)
+- Support `LChainId` and `Address` for Cosmos chains
+# [v0.3.0](https://github.com/lombard-finance/chain/releases/tag/v0.3.0)
 - Implementation for Solana ecosystem in `LChainId` and `Address`
 - `base58` library
 # [v0.2.0](https://github.com/lombard-finance/chain/releases/tag/v0.2.0)
