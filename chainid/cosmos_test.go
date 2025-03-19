@@ -45,8 +45,20 @@ func TestCosmosLChainId(t *testing.T) {
 			nil,
 		},
 		{
-			"Chain Id without counter",
+			"Cosmos Hub chain name",
 			"cosmoshub",
+			"03a232779a423721bfb80a99e86828034aa5726c469f770d39f29a0fb4710f9a",
+			nil,
+		},
+		{
+			"Chain Id with invalid counter",
+			"cosmoshub-some",
+			"",
+			chainid.ErrInvalidCosmosChainId,
+		},
+		{
+			"Chain Id with empty counter",
+			"cosmoshub-",
 			"",
 			chainid.ErrInvalidCosmosChainId,
 		},
