@@ -15,11 +15,12 @@ type Ecosystem uint8
 // Supported Ecosystems. We let the following constants match the MSB of the chain Id
 // according to Lombard internal reference.
 const (
-	EcosystemEVM     Ecosystem = 0
-	EcosystemSui     Ecosystem = 1
-	EcosystemSolana  Ecosystem = 2
-	EcosystemCosmos  Ecosystem = 3
-	EcosystemBitcoin Ecosystem = 255
+	EcosystemEVM      Ecosystem = 0
+	EcosystemSui      Ecosystem = 1
+	EcosystemSolana   Ecosystem = 2
+	EcosystemCosmos   Ecosystem = 3
+	EcosystemStarknet Ecosystem = 4
+	EcosystemBitcoin  Ecosystem = 255
 )
 
 func (t Ecosystem) String() string {
@@ -32,6 +33,8 @@ func (t Ecosystem) String() string {
 		return "solana"
 	case EcosystemCosmos:
 		return "cosmos"
+	case EcosystemStarknet:
+		return "starknet"
 	case EcosystemBitcoin:
 		return "bitcoin"
 	default:
@@ -48,6 +51,7 @@ func (t Ecosystem) IsSupported() bool {
 	case EcosystemSolana:
 	case EcosystemBitcoin:
 	case EcosystemCosmos:
+	case EcosystemStarknet:
 	default:
 		return false
 	}
@@ -110,6 +114,10 @@ func NewLChainId(in []byte) (LChainId, error) {
 		}, nil
 	case EcosystemCosmos:
 		return CosmosLChainId{
+			lChainId: id,
+		}, nil
+	case EcosystemStarknet:
+		return StarknetLChainId{
 			lChainId: id,
 		}, nil
 	default:

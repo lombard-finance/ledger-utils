@@ -17,6 +17,13 @@ func NewErrLength(expected int, actual int) error {
 	))
 }
 
+func NewMaxErrLength(max int, actual int) error {
+	return NewErrLChainIdInvalid(fmt.Errorf(
+		"%w: max %d bytes, got %d",
+		ErrLength, max, actual,
+	))
+}
+
 var ErrUnsupportedEcosystem = fmt.Errorf("unsupported ecosystem")
 
 func NewErrUnsupportedEcosystem(e byte) error {
