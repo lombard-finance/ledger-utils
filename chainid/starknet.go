@@ -33,6 +33,23 @@ func NewStarknetLChainId(id string) (*StarknetLChainId, error) {
 	}, nil
 }
 
+func NewStarknetLChainIdFromName(name string) (*StarknetLChainId, error) {
+	trimmed := strings.TrimSpace(name)
+	if len(trimmed) > MAX_STARKNET_CHAIN_ID_LENGTH {
+		return nil, NewMaxErrLength(MAX_STARKNET_CHAIN_ID_LENGTH, len(trimmed))
+	}
+	byteChainId := make([]byte, 32)
+	byteChainId[0] = byte(EcosystemStarknet)
+	copy(byteChainId[len(byteChainId)-len(trimmed):], []byte(trimmed))
+	innerChainId, err := newLChainId(byteChainId)
+	if err != nil {
+		return nil, err
+	}
+	return &StarknetLChainId{
+		lChainId: *innerChainId,
+	}, nil
+}
+
 // NewStarknetMainnetLChainId returns the Starknet Lombard Chain Id of Starknet mainnet SN_MAIN
 func NewStarknetMainnetLChainId() *StarknetLChainId {
 	chId, _ := NewStarknetLChainId("0x534e5f4d41494e")
