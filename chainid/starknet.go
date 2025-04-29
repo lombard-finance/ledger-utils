@@ -34,13 +34,13 @@ func NewStarknetLChainId(id string) (*StarknetLChainId, error) {
 }
 
 func NewStarknetLChainIdFromName(name string) (*StarknetLChainId, error) {
-	trimmed := strings.TrimSpace(name)
+	trimmed := []byte(strings.TrimSpace(name))
 	if len(trimmed) > MAX_STARKNET_CHAIN_ID_LENGTH {
 		return nil, NewMaxErrLength(MAX_STARKNET_CHAIN_ID_LENGTH, len(trimmed))
 	}
 	byteChainId := make([]byte, 32)
 	byteChainId[0] = byte(EcosystemStarknet)
-	copy(byteChainId[len(byteChainId)-len(trimmed):], []byte(trimmed))
+	copy(byteChainId[len(byteChainId)-len(trimmed):], trimmed)
 	innerChainId, err := newLChainId(byteChainId)
 	if err != nil {
 		return nil, err
