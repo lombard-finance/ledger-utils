@@ -1,6 +1,7 @@
 package chainid
 
 import (
+	"bytes"
 	"strings"
 
 	"github.com/lombard-finance/ledger-utils/common"
@@ -60,4 +61,14 @@ func NewStarknetMainnetLChainId() *StarknetLChainId {
 func NewStarknetSepoliaLChainId() *StarknetLChainId {
 	chId, _ := NewStarknetLChainId("0x534e5f5345504f4c4941")
 	return chId
+}
+
+// Identifier returns the textual identifier of a Starknet network.
+// They all start with SN
+func (ch *StarknetLChainId) Identifier() string {
+	snIndex := bytes.Index(ch.inner[1:], []byte("SN"))
+	if snIndex == -1 {
+		return string(ch.inner[1:])
+	}
+	return string(ch.inner[snIndex+1:])
 }
