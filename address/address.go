@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/lombard-finance/ledger-utils/chainid"
+	"github.com/lombard-finance/ledger-utils/common"
 )
 
 // compile time type assertion
@@ -129,4 +130,15 @@ func (a1 *GenericAddress) Equal(a2 Address) bool {
 		return false
 	}
 	return bytes.Equal(a1.inner, a2.Bytes())
+}
+
+func NewZeroAddress(e chainid.Ecosystem) Address {
+	switch e {
+	case chainid.EcosystemEVM:
+		addr, _ := NewEvmAddress(common.Bytes32Zeros[:EvmAddressLength])
+		return addr
+	default:
+		addr, _ := NewAddress(common.Bytes32Zeros, e)
+		return addr
+	}
 }

@@ -259,6 +259,10 @@ func TestGenericAddress(t *testing.T) {
 	})
 }
 
+func TestZeroAddress(t *testing.T) {
+	//TODO
+}
+
 func equalEcosystem(t *testing.T, expected chainid.Ecosystem, actual chainid.Ecosystem) {
 	if expected != actual {
 		t.Errorf("expected: %s actual: %s", expected.String(), actual.String())
