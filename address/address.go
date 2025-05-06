@@ -47,7 +47,7 @@ var ErrUnsupportedEcosystem = fmt.Errorf("ecosystem is unsupported")
 func NewAddress(b []byte, e chainid.Ecosystem) (Address, error) {
 	switch e {
 	case chainid.EcosystemEVM:
-		return NewEvmAddress(b)
+		return NewEvmAddressTruncating(b)
 	case chainid.EcosystemSui:
 		return NewSuiAddress(b)
 	case chainid.EcosystemSolana:
