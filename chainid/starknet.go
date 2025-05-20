@@ -57,7 +57,7 @@ func NewStarknetMainnetLChainId() *StarknetLChainId {
 	return chId
 }
 
-// NewStarknetMainnetLChainId returns the Starknet Lombard Chain Id of Starknet mainnet SN_MAIN
+// NewStarknetSepoliaLChainId returns the Starknet Lombard Chain Id of Starknet sepolia SN_SEPOLIA
 func NewStarknetSepoliaLChainId() *StarknetLChainId {
 	chId, _ := NewStarknetLChainId("0x534e5f5345504f4c4941")
 	return chId
