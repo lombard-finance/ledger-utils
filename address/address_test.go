@@ -233,6 +233,46 @@ func TestCosmosAddress(t *testing.T) {
 	})
 }
 
+func TestStarknetAddress(t *testing.T) {
+	validAddressString := "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7"
+	anotherValidAddressString := "0x0213c67ed78bc280887234fe5ed5e77272465317978ae86c25a71531d9332a2d"
+
+	t.Run("should create address from valid hex addresses", func(t *testing.T) {
+		addr, err := address.NewStarknetAddressFromHex(validAddressString)
+		common.AssertNoError(t, err)
+		common.EqualStrings(t, validAddressString, addr.String())
+		equalEcosystem(t, chainid.EcosystemStarknet, addr.Ecosystem())
+		common.AssertTrue(t, address.StarknetAddressLength == addr.Length())
+		// Same address without leading 0x
+		addrNo0x, err := address.NewStarknetAddressFromHex(validAddressString[2:])
+		common.AssertNoError(t, err)
+		common.AssertTrue(t, addr.Equal(addrNo0x))
+		// Check with different addresses
+		differentAddr, err := address.NewStarknetAddressFromHex(anotherValidAddressString)
+		common.AssertNoError(t, err)
+		common.AssertFalse(t, differentAddr.Equal(addr))
+		// Check address case does not matter
+		noChecksumAddr, err := address.NewStarknetAddressFromHex(strings.ToUpper(validAddressString[2:]))
+		common.AssertNoError(t, err)
+		common.AssertTrue(t, addr.Equal(noChecksumAddr))
+	})
+
+	t.Run("should reject invalid addresses", func(t *testing.T) {
+		// shorter address
+		_, err := address.NewStarknetAddressFromHex(validAddressString[5:])
+		common.AssertError(t, err, address.ErrBadAddress, address.ErrBadAddressStarknet)
+		// longer address
+		_, err = address.NewStarknetAddressFromHex(validAddressString + anotherValidAddressString)
+		common.AssertError(t, err, address.ErrBadAddress, address.ErrBadAddressStarknet)
+		// arbitrary char
+		_, err = address.NewStarknetAddressFromHex(validAddressString[:5] + "K" + validAddressString[6:])
+		common.AssertError(t, err, address.ErrBadAddress, address.ErrBadAddressStarknet)
+		// special char
+		_, err = address.NewStarknetAddressFromHex(validAddressString[:5] + "&" + validAddressString[6:])
+		common.AssertError(t, err, address.ErrBadAddress, address.ErrBadAddressStarknet)
+	})
+}
+
 func TestGenericAddress(t *testing.T) {
 	validAddressString := "0xbfde966bacd4260852155f7b523ef157f0b75a0e1e8a0784e463c3ef0bb69deb"
 	ecosystem := chainid.Ecosystem(10)

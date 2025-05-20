@@ -78,6 +78,18 @@ func TestLChainId(t *testing.T) {
 			func() chainid.LChainId { return chainid.NewSolanaDevnetLChainId() },
 		},
 		{
+			"Starknet Mainnet",
+			"0x04000000000000000000000000000000000000000000000000534e5f4d41494e",
+			chainid.EcosystemStarknet,
+			func() chainid.LChainId { return chainid.NewStarknetMainnetLChainId() },
+		},
+		{
+			"Starknet Sepolia",
+			"0x04000000000000000000000000000000000000000000534e5f5345504f4c4941",
+			chainid.EcosystemStarknet,
+			func() chainid.LChainId { return chainid.NewStarknetSepoliaLChainId() },
+		},
+		{
 			"Bitcoin",
 			"0xff0000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f",
 			chainid.EcosystemBitcoin,
@@ -201,6 +213,16 @@ func TestLChainIdFactories(t *testing.T) {
 			"cosmoshub-4",
 			func(in string) (chainid.LChainId, error) { return chainid.NewCosmosLChainId(in) },
 			func() chainid.LChainId { return chainid.NewCosmosHubLChainId() },
+		},
+		{
+			"SN_MAIN",
+			func(in string) (chainid.LChainId, error) { return chainid.NewStarknetLChainIdFromName(in) },
+			func() chainid.LChainId { return chainid.NewStarknetMainnetLChainId() },
+		},
+		{
+			"SN_SEPOLIA",
+			func(in string) (chainid.LChainId, error) { return chainid.NewStarknetLChainIdFromName(in) },
+			func() chainid.LChainId { return chainid.NewStarknetSepoliaLChainId() },
 		},
 	}
 	for _, tt := range tests {
