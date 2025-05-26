@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/lombard-finance/ledger-utils/chainid"
+	"github.com/lombard-finance/ledger-utils/common"
 )
 
 // compile time type assertion
@@ -15,6 +16,8 @@ var _ Address = &EvmAddress{}
 var _ Address = &SolanaAddress{}
 var _ Address = &SuiAddress{}
 var _ Address = &GenericAddress{}
+
+var ErrEmptyAddress = fmt.Errorf("empty address")
 
 // The Address interface serves as a unique gateway to addresses of all chains. In fact each library may treat
 // addresses in different manners and with different assumptions. So we try to unify all of them.
@@ -44,7 +47,7 @@ var ErrUnsupportedEcosystem = fmt.Errorf("ecosystem is unsupported")
 func NewAddress(b []byte, e chainid.Ecosystem) (Address, error) {
 	switch e {
 	case chainid.EcosystemEVM:
-		return NewEvmAddress(b)
+		return NewEvmAddressTruncating(b)
 	case chainid.EcosystemSui:
 		return NewSuiAddress(b)
 	case chainid.EcosystemSolana:
@@ -54,7 +57,7 @@ func NewAddress(b []byte, e chainid.Ecosystem) (Address, error) {
 	case chainid.EcosystemStarknet:
 		return NewStarknetAddress(b)
 	default:
-		return NewGenericAddress(b, e), nil
+		return NewGenericAddress(b, e)
 	}
 }
 
@@ -86,13 +89,16 @@ type GenericAddress struct {
 	ecosystem chainid.Ecosystem
 }
 
-func NewGenericAddress(b []byte, e chainid.Ecosystem) *GenericAddress {
+func NewGenericAddress(b []byte, e chainid.Ecosystem) (*GenericAddress, error) {
+	if len(b) == 0 {
+		return nil, ErrEmptyAddress
+	}
 	a := &GenericAddress{
 		inner:     make([]byte, len(b)),
 		ecosystem: e,
 	}
 	copy(a.inner, b)
-	return a
+	return a, nil
 }
 
 func NewGenericAddressFromHex(address string, e chainid.Ecosystem) (*GenericAddress, error) {
@@ -100,7 +106,7 @@ func NewGenericAddressFromHex(address string, e chainid.Ecosystem) (*GenericAddr
 	if err != nil {
 		return nil, fmt.Errorf("%w: hex decoding error %w", ErrBadAddress, err)
 	}
-	return NewGenericAddress(b, e), nil
+	return NewGenericAddress(b, e)
 }
 
 // String returns the '0x' led hex encoding of the generic address since no assumption on the ecosystem is available
@@ -131,4 +137,15 @@ func (a1 *GenericAddress) Equal(a2 Address) bool {
 		return false
 	}
 	return bytes.Equal(a1.inner, a2.Bytes())
+}
+
+func NewZeroAddress(e chainid.Ecosystem) Address {
+	switch e {
+	case chainid.EcosystemEVM:
+		addr, _ := NewEvmAddress(common.Bytes32Zeros[:EvmAddressLength])
+		return addr
+	default:
+		addr, _ := NewAddress(common.Bytes32Zeros, e)
+		return addr
+	}
 }

@@ -59,6 +59,9 @@ func TestNewAddress(t *testing.T) {
 	common.AssertNoError(t, err)
 	_, ok = genericAddress.(*address.GenericAddress)
 	common.AssertTrue(t, ok)
+
+	_, err = address.NewAddressFromString("", anotherEcosystem)
+	common.AssertError(t, err, address.ErrEmptyAddress)
 }
 
 func TestEVMAddress(t *testing.T) {
@@ -296,7 +299,19 @@ func TestGenericAddress(t *testing.T) {
 		differentAddr, err = address.NewGenericAddressFromHex(anotherValidAddressString, ecosystem)
 		common.AssertNoError(t, err)
 		common.AssertFalse(t, differentAddr.Equal(addr))
+		// Check it gives an error on empty string
+		_, err = address.NewGenericAddressFromHex("", ecosystem)
+		common.AssertError(t, err, address.ErrEmptyAddress)
 	})
+}
+
+func TestZeroAddress(t *testing.T) {
+	zeroEvm := address.NewZeroAddress(chainid.EcosystemEVM)
+	common.EqualStrings(t, "0x0000000000000000000000000000000000000000", zeroEvm.String())
+	zeroSui := address.NewZeroAddress(chainid.EcosystemSui)
+	common.EqualStrings(t, "0x"+common.Repeated64Zeros, zeroSui.String())
+	zeroSolana := address.NewZeroAddress(chainid.EcosystemSolana)
+	common.EqualStrings(t, "11111111111111111111111111111111", zeroSolana.String())
 }
 
 func equalEcosystem(t *testing.T, expected chainid.Ecosystem, actual chainid.Ecosystem) {
