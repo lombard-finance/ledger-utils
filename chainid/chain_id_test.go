@@ -78,6 +78,30 @@ func TestLChainId(t *testing.T) {
 			func() chainid.LChainId { return chainid.NewSolanaDevnetLChainId() },
 		},
 		{
+			"Cosmos - Lombard Ledger",
+			"0x0387b25e8e61f2ce4838b04795b231f09ee73ffd391da018bef4bc5c4975897b",
+			chainid.EcosystemCosmos,
+			func() chainid.LChainId { return chainid.NewLombardLedgerLChainId() },
+		},
+		{
+			"Cosmos - Osmosis",
+			"0x038ebfb6519e8d814f1b8aee62da9a4e173f7e6898d60d962042421d18dbe4ef",
+			chainid.EcosystemCosmos,
+			func() chainid.LChainId { return chainid.NewOsmosisLChainId() },
+		},
+		{
+			"Cosmos - Cosmos Hub",
+			"0x03a232779a423721bfb80a99e86828034aa5726c469f770d39f29a0fb4710f9a",
+			chainid.EcosystemCosmos,
+			func() chainid.LChainId { return chainid.NewCosmosHubLChainId() },
+		},
+		{
+			"Cosmos - Babylon",
+			"0x0358ed74e1573257904a3b763e53361dbf356e7a01fe98b6e15e91b79c16cb80",
+			chainid.EcosystemCosmos,
+			func() chainid.LChainId { return chainid.NewBabylonLChainId() },
+		},
+		{
 			"Bitcoin",
 			"0xff0000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f",
 			chainid.EcosystemBitcoin,
@@ -201,6 +225,11 @@ func TestLChainIdFactories(t *testing.T) {
 			"cosmoshub-4",
 			func(in string) (chainid.LChainId, error) { return chainid.NewCosmosLChainId(in) },
 			func() chainid.LChainId { return chainid.NewCosmosHubLChainId() },
+		},
+		{
+			"bbn-1",
+			func(in string) (chainid.LChainId, error) { return chainid.NewCosmosLChainId(in) },
+			func() chainid.LChainId { return chainid.NewBabylonLChainId() },
 		},
 	}
 	for _, tt := range tests {
