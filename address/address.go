@@ -17,6 +17,8 @@ var _ Address = &SolanaAddress{}
 var _ Address = &SuiAddress{}
 var _ Address = &GenericAddress{}
 
+var ErrEmptyAddress = fmt.Errorf("empty address")
+
 // The Address interface serves as a unique gateway to addresses of all chains. In fact each library may treat
 // addresses in different manners and with different assumptions. So we try to unify all of them.
 type Address interface {
@@ -45,7 +47,7 @@ var ErrUnsupportedEcosystem = fmt.Errorf("ecosystem is unsupported")
 func NewAddress(b []byte, e chainid.Ecosystem) (Address, error) {
 	switch e {
 	case chainid.EcosystemEVM:
-		return NewEvmAddress(b)
+		return NewEvmAddressTruncating(b)
 	case chainid.EcosystemSui:
 		return NewSuiAddress(b)
 	case chainid.EcosystemSolana:
@@ -53,7 +55,7 @@ func NewAddress(b []byte, e chainid.Ecosystem) (Address, error) {
 	case chainid.EcosystemCosmos:
 		return NewCosmosAddress(b)
 	default:
-		return NewGenericAddress(b, e), nil
+		return NewGenericAddress(b, e)
 	}
 }
 
@@ -85,13 +87,16 @@ type GenericAddress struct {
 	ecosystem chainid.Ecosystem
 }
 
-func NewGenericAddress(b []byte, e chainid.Ecosystem) *GenericAddress {
+func NewGenericAddress(b []byte, e chainid.Ecosystem) (*GenericAddress, error) {
+	if len(b) == 0 {
+		return nil, ErrEmptyAddress
+	}
 	a := &GenericAddress{
 		inner:     make([]byte, len(b)),
 		ecosystem: e,
 	}
 	copy(a.inner, b)
-	return a
+	return a, nil
 }
 
 func NewGenericAddressFromHex(address string, e chainid.Ecosystem) (*GenericAddress, error) {
@@ -99,7 +104,7 @@ func NewGenericAddressFromHex(address string, e chainid.Ecosystem) (*GenericAddr
 	if err != nil {
 		return nil, fmt.Errorf("%w: hex decoding error %w", ErrBadAddress, err)
 	}
-	return NewGenericAddress(b, e), nil
+	return NewGenericAddress(b, e)
 }
 
 // String returns the '0x' led hex encoding of the generic address since no assumption on the ecosystem is available

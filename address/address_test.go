@@ -59,6 +59,9 @@ func TestNewAddress(t *testing.T) {
 	common.AssertNoError(t, err)
 	_, ok = genericAddress.(*address.GenericAddress)
 	common.AssertTrue(t, ok)
+
+	_, err = address.NewAddressFromString("", anotherEcosystem)
+	common.AssertError(t, err, address.ErrEmptyAddress)
 }
 
 func TestEVMAddress(t *testing.T) {
@@ -256,6 +259,9 @@ func TestGenericAddress(t *testing.T) {
 		differentAddr, err = address.NewGenericAddressFromHex(anotherValidAddressString, ecosystem)
 		common.AssertNoError(t, err)
 		common.AssertFalse(t, differentAddr.Equal(addr))
+		// Check it gives an error on empty string
+		_, err = address.NewGenericAddressFromHex("", ecosystem)
+		common.AssertError(t, err, address.ErrEmptyAddress)
 	})
 }
 
