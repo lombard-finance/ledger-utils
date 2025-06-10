@@ -259,6 +259,15 @@ func TestGenericAddress(t *testing.T) {
 	})
 }
 
+func TestZeroAddress(t *testing.T) {
+	zeroEvm := address.NewZeroAddress(chainid.EcosystemEVM)
+	common.EqualStrings(t, "0x0000000000000000000000000000000000000000", zeroEvm.String())
+	zeroSui := address.NewZeroAddress(chainid.EcosystemSui)
+	common.EqualStrings(t, "0x"+common.Repeated64Zeros, zeroSui.String())
+	zeroSolana := address.NewZeroAddress(chainid.EcosystemSolana)
+	common.EqualStrings(t, "11111111111111111111111111111111", zeroSolana.String())
+}
+
 func equalEcosystem(t *testing.T, expected chainid.Ecosystem, actual chainid.Ecosystem) {
 	if expected != actual {
 		t.Errorf("expected: %s actual: %s", expected.String(), actual.String())
