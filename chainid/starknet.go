@@ -11,15 +11,10 @@ type StarknetLChainId struct {
 	lChainId
 }
 
-// MAX_STARKNET_CHAIN_ID_LENGTH is the maximum length of a Starknet chain id represented in hex string.
-// We accept up to 31 that fit as-is in the Lombard Chain Id, while currently available ones are only
-// 0x534e5f5345504f4c4941 for sepolia and 0x534e5f4d41494e for main
-const MAX_STARKNET_CHAIN_ID_LENGTH = 62
-
 func NewStarknetLChainId(id string) (*StarknetLChainId, error) {
 	trimmed := strings.TrimPrefix(id, "0x")
-	if len(trimmed) > MAX_STARKNET_CHAIN_ID_LENGTH {
-		return nil, NewMaxErrLength(MAX_STARKNET_CHAIN_ID_LENGTH, len(id))
+	if len(trimmed) > ChainIdAvailableLength*2 {
+		return nil, NewMaxErrLength(ChainIdAvailableLength*2, len(id))
 	}
 	innerChainId, err := newLChainIdFromHex(
 		EcosystemStarknet.ToEcosystemHexByte() +
@@ -36,8 +31,8 @@ func NewStarknetLChainId(id string) (*StarknetLChainId, error) {
 
 func NewStarknetLChainIdFromName(name string) (*StarknetLChainId, error) {
 	trimmed := []byte(strings.TrimSpace(name))
-	if len(trimmed) > MAX_STARKNET_CHAIN_ID_LENGTH {
-		return nil, NewMaxErrLength(MAX_STARKNET_CHAIN_ID_LENGTH, len(trimmed))
+	if len(trimmed) > ChainIdAvailableLength*2 {
+		return nil, NewMaxErrLength(ChainIdAvailableLength*2, len(trimmed))
 	}
 	byteChainId := make([]byte, 32)
 	byteChainId[0] = byte(EcosystemStarknet)

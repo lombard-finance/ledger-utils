@@ -9,6 +9,9 @@ import (
 
 const ChainIdLength = 32
 
+// ChainIdAvailableLength is the amount of bytes available to distinguish a chain within an ecosystem
+const ChainIdAvailableLength = 31
+
 // Ecosystem identifies the Ecosystem a chain Id belongs to.
 type Ecosystem uint8
 
