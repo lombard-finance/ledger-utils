@@ -15,7 +15,7 @@ create-release:
 ifneq ($(strip $(TAG)),)
 	@echo "--> Running release for tag: $(TAG)"
 	@echo "--> Create release tag: $(TAG)"
-	git tag $(TAG)
+	git tag $(TAG) -m "Release $(TAG)"
 	git push origin $(TAG)
 	@echo "--> Done creating release tag: $(TAG)"
 else
