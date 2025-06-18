@@ -113,16 +113,16 @@ func TestEVMAddress(t *testing.T) {
 
 		// Error from longer non-zero bytes
 		longerAddrBytes := append(validAddress.Bytes(), validAddress.Bytes()...)
-		_, err = address.NewEvmAddressTruncating(longerAddrBytes)
+		_, err = address.NewEvmAddress(longerAddrBytes)
 		common.AssertError(t, err, address.ErrBadAddress, address.ErrBadAddressEvm)
 
 		// Error on shorter bytes
-		_, err = address.NewEvmAddressTruncating(longerAddrBytes[:10])
+		_, err = address.NewEvmAddress(longerAddrBytes[:10])
 		common.AssertError(t, err, address.ErrBadAddress, address.ErrBadAddressEvm)
 
 		// Should create from longer bytes with leading zeroes
 		longerAddrBytesWithZeroes := append(make([]byte, 12), validAddress.Bytes()...)
-		addrFromLongerWithZeroes, err := address.NewEvmAddressTruncating(longerAddrBytesWithZeroes)
+		addrFromLongerWithZeroes, err := address.NewEvmAddress(longerAddrBytesWithZeroes)
 		common.AssertNoError(t, err)
 		common.AssertTrue(t, addrFromLongerWithZeroes.Equal(validAddress))
 	})
