@@ -1,5 +1,9 @@
 # [v0.5.0](https://github.com/lombard-finance/chain/releases/tag/v0.5.0)
 - Support `LChainId` and `Address` for Starknet chains
+- Add `Address` constructors for Zero address on supported chains
+- Add `LChainId` constructors for Ink, Sonic, BSC and their testnets
+- Add constructor for Babylon `LChainId`
+- Truncate by default EVM addresses to 20 bytes and check truncated bytes are zeroes.
 # [v0.4.1](https://github.com/lombard-finance/chain/releases/tag/v0.4.1)
 - Accept both chain Id and chain name in Cosmos `LChainId` constructor
 # [v0.4.0](https://github.com/lombard-finance/chain/releases/tag/v0.4.0)
