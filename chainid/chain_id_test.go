@@ -54,6 +54,48 @@ func TestLChainId(t *testing.T) {
 			func() chainid.LChainId { return chainid.NewEVMBinanceSmartChainLChainId() },
 		},
 		{
+			"BSC Testnet",
+			"0x0000000000000000000000000000000000000000000000000000000000000061",
+			chainid.EcosystemEVM,
+			func() chainid.LChainId { return chainid.NewEVMBinanceSmartChainTestnetLChainId() },
+		},
+		{
+			"Sonic",
+			"0x0000000000000000000000000000000000000000000000000000000000000092",
+			chainid.EcosystemEVM,
+			func() chainid.LChainId { return chainid.NewEVMSonicLChainId() },
+		},
+		{
+			"Sonic Blaze Testnet",
+			"0x000000000000000000000000000000000000000000000000000000000000dede",
+			chainid.EcosystemEVM,
+			func() chainid.LChainId { return chainid.NewEVMSonicBlazeTestnetLChainId() },
+		},
+		{
+			"Ink",
+			"0x000000000000000000000000000000000000000000000000000000000000def1",
+			chainid.EcosystemEVM,
+			func() chainid.LChainId { return chainid.NewEVMInkLChainId() },
+		},
+		{
+			"Ink Sepolia",
+			"0x00000000000000000000000000000000000000000000000000000000000ba5ed",
+			chainid.EcosystemEVM,
+			func() chainid.LChainId { return chainid.NewEVMInkSepoliaLChainId() },
+		},
+		{
+			"Katana",
+			"0x00000000000000000000000000000000000000000000000000000000000b67d2",
+			chainid.EcosystemEVM,
+			func() chainid.LChainId { return chainid.NewEVMKatanaLChainId() },
+		},
+		{
+			"Katana Tatara Testnet",
+			"0x000000000000000000000000000000000000000000000000000000000001f977",
+			chainid.EcosystemEVM,
+			func() chainid.LChainId { return chainid.NewEVMKatanaTataraTestnetLChainId() },
+		},
+		{
 			"Sui",
 			"0x0100000000000000000000000000000000000000000000000000000035834a8a",
 			chainid.EcosystemSui,
@@ -76,6 +118,30 @@ func TestLChainId(t *testing.T) {
 			"0x0259db5080fc2c6d3bcf7ca90712d3c2e5e6c28f27f0dfbb9953bdb0894c03ab",
 			chainid.EcosystemSolana,
 			func() chainid.LChainId { return chainid.NewSolanaDevnetLChainId() },
+		},
+		{
+			"Cosmos - Lombard Ledger",
+			"0x0387b25e8e61f2ce4838b04795b231f09ee73ffd391da018bef4bc5c4975897b",
+			chainid.EcosystemCosmos,
+			func() chainid.LChainId { return chainid.NewLombardLedgerLChainId() },
+		},
+		{
+			"Cosmos - Osmosis",
+			"0x038ebfb6519e8d814f1b8aee62da9a4e173f7e6898d60d962042421d18dbe4ef",
+			chainid.EcosystemCosmos,
+			func() chainid.LChainId { return chainid.NewOsmosisLChainId() },
+		},
+		{
+			"Cosmos - Cosmos Hub",
+			"0x03a232779a423721bfb80a99e86828034aa5726c469f770d39f29a0fb4710f9a",
+			chainid.EcosystemCosmos,
+			func() chainid.LChainId { return chainid.NewCosmosHubLChainId() },
+		},
+		{
+			"Cosmos - Babylon",
+			"0x0358ed74e1573257904a3b763e53361dbf356e7a01fe98b6e15e91b79c16cb80",
+			chainid.EcosystemCosmos,
+			func() chainid.LChainId { return chainid.NewBabylonLChainId() },
 		},
 		{
 			"Starknet Mainnet",
@@ -175,9 +241,44 @@ func TestLChainIdFactories(t *testing.T) {
 			func() chainid.LChainId { return chainid.NewEVMBaseLChainId() },
 		},
 		{
-			"0x14a34",
+			"0x14a34", // Base Sepolia
 			func(in string) (chainid.LChainId, error) { return chainid.NewEVMLChainId(in) },
 			func() chainid.LChainId { return chainid.NewEVMBaseSepoliaLChainId() },
+		},
+		{
+			"0x61", // BSC Testnet
+			func(in string) (chainid.LChainId, error) { return chainid.NewEVMLChainId(in) },
+			func() chainid.LChainId { return chainid.NewEVMBinanceSmartChainTestnetLChainId() },
+		},
+		{
+			"0x92", // Sonic
+			func(in string) (chainid.LChainId, error) { return chainid.NewEVMLChainId(in) },
+			func() chainid.LChainId { return chainid.NewEVMSonicLChainId() },
+		},
+		{
+			"0xdede", // Sonic Blaze Testnet
+			func(in string) (chainid.LChainId, error) { return chainid.NewEVMLChainId(in) },
+			func() chainid.LChainId { return chainid.NewEVMSonicBlazeTestnetLChainId() },
+		},
+		{
+			"0xdef1", // Ink
+			func(in string) (chainid.LChainId, error) { return chainid.NewEVMLChainId(in) },
+			func() chainid.LChainId { return chainid.NewEVMInkLChainId() },
+		},
+		{
+			"0xba5ed", // Ink Sepolia
+			func(in string) (chainid.LChainId, error) { return chainid.NewEVMLChainId(in) },
+			func() chainid.LChainId { return chainid.NewEVMInkSepoliaLChainId() },
+		},
+		{
+			"0xb67d2", // Katana
+			func(in string) (chainid.LChainId, error) { return chainid.NewEVMLChainId(in) },
+			func() chainid.LChainId { return chainid.NewEVMKatanaLChainId() },
+		},
+		{
+			"0x1f977", // Katana Tatara Testnet
+			func(in string) (chainid.LChainId, error) { return chainid.NewEVMLChainId(in) },
+			func() chainid.LChainId { return chainid.NewEVMKatanaTataraTestnetLChainId() },
 		},
 		{
 			"0x35834a8a",
@@ -213,6 +314,11 @@ func TestLChainIdFactories(t *testing.T) {
 			"cosmoshub-4",
 			func(in string) (chainid.LChainId, error) { return chainid.NewCosmosLChainId(in) },
 			func() chainid.LChainId { return chainid.NewCosmosHubLChainId() },
+		},
+		{
+			"bbn-1",
+			func(in string) (chainid.LChainId, error) { return chainid.NewCosmosLChainId(in) },
+			func() chainid.LChainId { return chainid.NewBabylonLChainId() },
 		},
 		{
 			"SN_MAIN",
