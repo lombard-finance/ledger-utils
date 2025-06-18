@@ -86,14 +86,6 @@ func TestEVMAddress(t *testing.T) {
 		noChecksumAddr, err := address.NewEvmAddressFromHex(strings.ToLower(validAddressString))
 		common.AssertNoError(t, err)
 		common.AssertTrue(t, addr.Equal(noChecksumAddr))
-		// Create from longer byte
-		longerAddrBytes := append(noChecksumAddr.Bytes(), noChecksumAddr.Bytes()...)
-		addrFromLonger, err := address.NewEvmAddressTruncating(longerAddrBytes)
-		common.AssertNoError(t, err)
-		common.AssertTrue(t, addrFromLonger.Equal(noChecksumAddr))
-		// Error on shorter bytes
-		_, err = address.NewEvmAddressTruncating(longerAddrBytes[:10])
-		common.AssertError(t, err, address.ErrBadAddress, address.ErrBadAddressEvm)
 	})
 
 	t.Run("should reject invalid addresses", func(t *testing.T) {
@@ -114,10 +106,25 @@ func TestEVMAddress(t *testing.T) {
 
 	t.Run("should create valid addresses from bytes", func(t *testing.T) {
 		validAddrBytes, _ := hex.DecodeString(validAddressString[2:])
-		addrByte, err := address.NewEvmAddress(validAddrBytes)
+		validAddress, err := address.NewEvmAddress(validAddrBytes)
 		common.AssertNoError(t, err)
 		addr, _ := address.NewEvmAddressFromHex(validAddressString)
-		common.AssertTrue(t, addr.Equal(addrByte))
+		common.AssertTrue(t, addr.Equal(validAddress))
+
+		// Error from longer non-zero bytes
+		longerAddrBytes := append(validAddress.Bytes(), validAddress.Bytes()...)
+		_, err = address.NewEvmAddressTruncating(longerAddrBytes)
+		common.AssertError(t, err, address.ErrBadAddress, address.ErrBadAddressEvm)
+
+		// Error on shorter bytes
+		_, err = address.NewEvmAddressTruncating(longerAddrBytes[:10])
+		common.AssertError(t, err, address.ErrBadAddress, address.ErrBadAddressEvm)
+
+		// Should create from longer bytes with leading zeroes
+		longerAddrBytesWithZeroes := append(make([]byte, 12), validAddress.Bytes()...)
+		addrFromLongerWithZeroes, err := address.NewEvmAddressTruncating(longerAddrBytesWithZeroes)
+		common.AssertNoError(t, err)
+		common.AssertTrue(t, addrFromLongerWithZeroes.Equal(validAddress))
 	})
 }
 
