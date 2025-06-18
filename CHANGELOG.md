@@ -1,3 +1,5 @@
+# [v0.5.0](https://github.com/lombard-finance/chain/releases/tag/v0.5.0)
+- Support `LChainId` and `Address` for Starknet chains
 # [v0.4.1](https://github.com/lombard-finance/chain/releases/tag/v0.4.1)
 - Accept both chain Id and chain name in Cosmos `LChainId` constructor
 # [v0.4.0](https://github.com/lombard-finance/chain/releases/tag/v0.4.0)

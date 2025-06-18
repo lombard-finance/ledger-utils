@@ -54,6 +54,8 @@ func NewAddress(b []byte, e chainid.Ecosystem) (Address, error) {
 		return NewSolanaAddress(b)
 	case chainid.EcosystemCosmos:
 		return NewCosmosAddress(b)
+	case chainid.EcosystemStarknet:
+		return NewStarknetAddress(b)
 	default:
 		return NewGenericAddress(b, e)
 	}
