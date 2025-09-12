@@ -236,12 +236,12 @@ func NewGenericLChainId(in []byte) (*GenericLChainId, error) {
 	}, nil
 }
 
-func NewGenericLChainIdFromLChainId(in LChainId) (*GenericLChainId, error) {
+func NewGenericLChainIdFromLChainId(in LChainId) *GenericLChainId {
 	return &GenericLChainId{
 		lChainId: lChainId{
 			inner: in.Bytes(),
 		},
-	}, nil
+	}
 }
 
 // ToEcosystem returns a specialized instance of the LChainId if the ecosystem is supported,

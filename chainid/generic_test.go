@@ -148,10 +148,7 @@ func TestNewGenericLChainId(t *testing.T) {
 
 func TestNewGenericLChainIdFromLChainId(t *testing.T) {
 	base := chainid.NewEVMEthereumLChainId() // specialized
-	g, err := chainid.NewGenericLChainIdFromLChainId(base)
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
+	g := chainid.NewGenericLChainIdFromLChainId(base)
 	if g.Ecosystem() != base.Ecosystem() {
 		t.Fatalf("ecosystem mismatch: %d vs %d", g.Ecosystem(), base.Ecosystem())
 	}
@@ -172,10 +169,7 @@ func TestNewGenericLChainIdFromLChainId(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error creating original generic: %v", err)
 	}
-	again, err := chainid.NewGenericLChainIdFromLChainId(origGeneric)
-	if err != nil {
-		t.Fatalf("unexpected error wrapping generic again: %v", err)
-	}
+	again := chainid.NewGenericLChainIdFromLChainId(origGeneric)
 	if !again.Equal(origGeneric) {
 		t.Fatalf("expected equality after wrapping generic chain id")
 	}
