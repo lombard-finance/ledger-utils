@@ -111,6 +111,13 @@ func NewGenericAddressFromHex(address string, e chainid.Ecosystem) (*GenericAddr
 	return NewGenericAddress(b, e)
 }
 
+func NewGenericAddressFromAddress(a Address) *GenericAddress {
+	return &GenericAddress{
+		inner:     a.Bytes(),
+		ecosystem: a.Ecosystem(),
+	}
+}
+
 // String returns the '0x' led hex encoding of the generic address since no assumption on the ecosystem is available
 func (a *GenericAddress) String() string {
 	return "0x" + a.Hex()

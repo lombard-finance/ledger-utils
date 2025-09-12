@@ -76,9 +76,5 @@ func (a1 *SolanaAddress) Equal(a2 Address) bool {
 	if a2.Ecosystem() != a1.Ecosystem() {
 		return false
 	}
-	a2AsSolana, ok := a2.(*SolanaAddress)
-	if !ok {
-		return false
-	}
-	return bytes.Equal(a1.inner[:], a2AsSolana.inner[:])
+	return bytes.Equal(a1.inner[:], a2.Bytes())
 }

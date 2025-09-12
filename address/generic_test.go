@@ -169,3 +169,26 @@ func TestGenericAddressMarshalTo(t *testing.T) {
 		t.Fatalf("expected error on small buffer")
 	}
 }
+
+func TestNewGenericAddressFromAddress(t *testing.T) {
+	baseHex := "0x8236a87084f8B84306f72007F36F2618A5634494"
+	base, err := address.NewEvmAddressFromHex(baseHex)
+	if err != nil {
+		t.Fatalf("unexpected error creating base address: %v", err)
+	}
+
+	wrapped := address.NewGenericAddressFromAddress(base)
+	if wrapped.Ecosystem() != base.Ecosystem() {
+		t.Fatalf("ecosystem mismatch: %d vs %d", wrapped.Ecosystem(), base.Ecosystem())
+	}
+	if !wrapped.Equal(base) || !base.Equal(wrapped) {
+		t.Fatalf("expected equality between wrapped generic and base address")
+	}
+
+	// copy semantics: mutate a copy of base bytes and ensure wrapped unchanged
+	b := base.Bytes()
+	b[0] ^= 0xFF
+	if !wrapped.Equal(base) {
+		t.Fatalf("mutation of external slice should not affect wrapped")
+	}
+}
