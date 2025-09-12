@@ -3,6 +3,7 @@ package chainid_test
 import (
 	"bytes"
 	"errors"
+	"strings"
 	"testing"
 
 	"github.com/lombard-finance/ledger-utils/chainid"
@@ -172,5 +173,46 @@ func TestNewGenericLChainIdFromLChainId(t *testing.T) {
 	again := chainid.NewGenericLChainIdFromLChainId(origGeneric)
 	if !again.Equal(origGeneric) {
 		t.Fatalf("expected equality after wrapping generic chain id")
+	}
+}
+
+func TestNewGenericLChainIdFromHex(t *testing.T) {
+	validHex := "0x77000000000000000000000000000000000000000000000000000000000000aa"
+	g1, err := chainid.NewGenericLChainIdFromHex(validHex)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if g1.Hex() != validHex[2:] {
+		t.Fatalf("hex mismatch: %s", g1.Hex())
+	}
+	if g1.Ecosystem() != chainid.Ecosystem(0x77) {
+		t.Fatalf("ecosystem mismatch: %d", g1.Ecosystem())
+	}
+
+	// without 0x prefix
+	g2, err := chainid.NewGenericLChainIdFromHex(validHex[2:])
+	if err != nil {
+		t.Fatalf("unexpected error (no 0x): %v", err)
+	}
+	if !g1.Equal(g2) {
+		t.Fatalf("expected equality between prefixed and non-prefixed forms")
+	}
+
+	// shorter (1 byte)
+	shortHex := "0x77"
+	if _, err := chainid.NewGenericLChainIdFromHex(shortHex); err == nil || !errors.Is(err, chainid.ErrLChainIdInvalid) || !errors.Is(err, chainid.ErrLength) {
+		t.Fatalf("expected length error on short hex, got %v", err)
+	}
+
+	// longer (33 bytes)
+	longHex := validHex + "00"
+	if _, err := chainid.NewGenericLChainIdFromHex(longHex); err == nil || !errors.Is(err, chainid.ErrLChainIdInvalid) || !errors.Is(err, chainid.ErrLength) {
+		t.Fatalf("expected length error on long hex, got %v", err)
+	}
+
+	// invalid character
+	badCharHex := "0x7G" + strings.Repeat("00", 30) + "aa" // introduces 'G'
+	if _, err := chainid.NewGenericLChainIdFromHex(badCharHex); err == nil || !errors.Is(err, chainid.ErrLChainIdInvalid) {
+		t.Fatalf("expected invalid hex error, got %v", err)
 	}
 }

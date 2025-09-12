@@ -226,6 +226,7 @@ type GenericLChainId struct {
 	lChainId
 }
 
+// NewGenericLChainId creates a new GenericLChainId from a slice of bytes
 func NewGenericLChainId(in []byte) (*GenericLChainId, error) {
 	inner, err := newLChainId(in)
 	if err != nil {
@@ -236,6 +237,19 @@ func NewGenericLChainId(in []byte) (*GenericLChainId, error) {
 	}, nil
 }
 
+// NewGenericLChainIdFromHex creates a new GenericLChainId from an hex string. Both string with
+// and without leading 0x are supported
+func NewGenericLChainIdFromHex(s string) (*GenericLChainId, error) {
+	inner, err := newLChainIdFromHex(s)
+	if err != nil {
+		return nil, err
+	}
+	return &GenericLChainId{
+		lChainId: *inner,
+	}, nil
+}
+
+// NewGenericLChainIdFromLChainId creates a new GenericLChainId from an existing LChainId
 func NewGenericLChainIdFromLChainId(in LChainId) *GenericLChainId {
 	return &GenericLChainId{
 		lChainId: lChainId{
