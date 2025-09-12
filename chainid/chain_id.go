@@ -5,6 +5,8 @@ import (
 	"encoding/hex"
 	"fmt"
 	"strings"
+
+	"github.com/lombard-finance/ledger-utils/common"
 )
 
 const ChainIdLength = 32
@@ -23,6 +25,7 @@ const (
 	EcosystemSolana   Ecosystem = 2
 	EcosystemCosmos   Ecosystem = 3
 	EcosystemStarknet Ecosystem = 4
+	EcosystemUnknown  Ecosystem = 254
 	EcosystemBitcoin  Ecosystem = 255
 )
 
@@ -214,8 +217,64 @@ func ValidateChainIdFromBytes(chainIdBytes []byte) error {
 	return nil
 }
 
+var _ LChainId = &GenericLChainId{}
+var _ common.GogoprotoCustomType = &GenericLChainId{}
+
 // GenericLChainId provides base functionalities of the Lombard Chain Id without any check on the
 // supported ecosystem.
 type GenericLChainId struct {
 	lChainId
+}
+
+// ToEcosystem returns a specialized instance of the LChainId if the ecosystem is supported,
+// otherwise it returns ErrUnsupportedEcosystem
+func (g *GenericLChainId) ToEcosystem() (LChainId, error) {
+	switch g.Ecosystem() {
+	case EcosystemEVM:
+		return EVMLChainId{
+			lChainId: g.lChainId,
+		}, nil
+	case EcosystemSui:
+		return SuiLChainId{
+			lChainId: g.lChainId,
+		}, nil
+	case EcosystemSolana:
+		return SolanaLChainId{
+			lChainId: g.lChainId,
+		}, nil
+	case EcosystemCosmos:
+		return CosmosLChainId{
+			lChainId: g.lChainId,
+		}, nil
+	case EcosystemStarknet:
+		return StarknetLChainId{
+			lChainId: g.lChainId,
+		}, nil
+	case EcosystemBitcoin:
+		return BitcoinLChainId{
+			lChainId: g.lChainId,
+		}, nil
+	default:
+		return nil, NewErrUnsupportedEcosystem(g.Ecosystem())
+	}
+}
+
+// Marshal implements common.GogoprotoCustomType.
+func (g *GenericLChainId) Marshal() ([]byte, error) {
+	return g.Bytes(), nil
+}
+
+// Size implements common.GogoprotoCustomType.
+func (g *GenericLChainId) Size() int {
+	return ChainIdLength
+}
+
+// Unmarshal implements common.GogoprotoCustomType.
+func (g *GenericLChainId) Unmarshal(data []byte) error {
+	if len(data) != ChainIdLength {
+		return NewErrLength(ChainIdLength, len(data))
+	}
+	g.inner = make([]byte, ChainIdLength)
+	copy(g.inner[:], data)
+	return nil
 }

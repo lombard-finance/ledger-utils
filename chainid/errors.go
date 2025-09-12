@@ -26,7 +26,7 @@ func NewMaxErrLength(max int, actual int) error {
 
 var ErrUnsupportedEcosystem = fmt.Errorf("unsupported ecosystem")
 
-func NewErrUnsupportedEcosystem(e byte) error {
+func NewErrUnsupportedEcosystem(e Ecosystem) error {
 	return NewErrLChainIdInvalid(
 		fmt.Errorf("%w: %d", ErrUnsupportedEcosystem, e),
 	)

@@ -82,6 +82,8 @@ func NewAddressFromString(address string, e chainid.Ecosystem) (Address, error) 
 	}
 }
 
+var _ common.GogoprotoCustomType = &GenericAddress{}
+
 // GenericAddress does not enforce any ecosystem specific check, leaving to the caller
 // the need to check ecosystem requirements
 type GenericAddress struct {
@@ -137,6 +139,33 @@ func (a1 *GenericAddress) Equal(a2 Address) bool {
 		return false
 	}
 	return bytes.Equal(a1.inner, a2.Bytes())
+}
+
+// Marshal serializes the address into a byte slice. The information about the ecosystem is lost.
+func (a *GenericAddress) Marshal() ([]byte, error) {
+	return a.Bytes(), nil
+}
+
+// Size returns the size of the address in bytes
+func (a *GenericAddress) Size() int {
+	return len(a.inner)
+}
+
+// Unmarshal deserializes the address from a byte slice. The ecosystem is set to Unknown.
+func (a *GenericAddress) Unmarshal(data []byte) error {
+	if len(data) == 0 {
+		return ErrEmptyAddress
+	}
+	a.inner = make([]byte, len(data))
+	copy(a.inner, data)
+	a.ecosystem = chainid.EcosystemUnknown
+	return nil
+}
+
+// ToEcosystem converts the generic address to a concrete instance of Address according to
+// the provided ecosystem. It ignores the current ecosystem of the generic address.
+func (a *GenericAddress) ToEcosystem(e chainid.Ecosystem) (Address, error) {
+	return NewAddress(a.inner, e)
 }
 
 func NewZeroAddress(e chainid.Ecosystem) Address {
