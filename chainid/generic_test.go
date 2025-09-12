@@ -2,6 +2,7 @@ package chainid_test
 
 import (
 	"bytes"
+	"errors"
 	"testing"
 
 	"github.com/lombard-finance/ledger-utils/chainid"
@@ -113,5 +114,69 @@ func TestGenericLChainIdMarshalTo(t *testing.T) {
 	small := make([]byte, chainid.ChainIdLength-1)
 	if _, err := g.MarshalTo(small); err == nil {
 		t.Fatalf("expected error on small buffer")
+	}
+}
+
+func TestNewGenericLChainId(t *testing.T) {
+	// valid construction
+	in := make([]byte, chainid.ChainIdLength)
+	in[0] = 0xAB // arbitrary unsupported ecosystem (171)
+	in[len(in)-1] = 0x01
+	g, err := chainid.NewGenericLChainId(in)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if g.Ecosystem() != chainid.Ecosystem(0xAB) {
+		t.Fatalf("ecosystem mismatch: %d", g.Ecosystem())
+	}
+	// copy semantics
+	in[1] = 0xFF
+	if g.Bytes()[1] == 0xFF {
+		t.Fatalf("mutation of input slice leaked into GenericLChainId")
+	}
+
+	// invalid lengths
+	tooShort := make([]byte, chainid.ChainIdLength-1)
+	if _, err := chainid.NewGenericLChainId(tooShort); err == nil || !errors.Is(err, chainid.ErrLChainIdInvalid) || !errors.Is(err, chainid.ErrLength) {
+		t.Fatalf("expected length error (short), got %v", err)
+	}
+	tooLong := make([]byte, chainid.ChainIdLength+1)
+	if _, err := chainid.NewGenericLChainId(tooLong); err == nil || !errors.Is(err, chainid.ErrLChainIdInvalid) || !errors.Is(err, chainid.ErrLength) {
+		t.Fatalf("expected length error (long), got %v", err)
+	}
+}
+
+func TestNewGenericLChainIdFromLChainId(t *testing.T) {
+	base := chainid.NewEVMEthereumLChainId() // specialized
+	g, err := chainid.NewGenericLChainIdFromLChainId(base)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if g.Ecosystem() != base.Ecosystem() {
+		t.Fatalf("ecosystem mismatch: %d vs %d", g.Ecosystem(), base.Ecosystem())
+	}
+	if !g.Equal(base) || !base.Equal(g) {
+		t.Fatalf("expected equality between generic and base chain id")
+	}
+	// ensure deep copy (mutating exported bytes from base doesn't affect generic)
+	b := base.Bytes()
+	b[5] ^= 0xFF
+	if !g.Equal(base) { // equality should still hold because we mutated copy, not underlying
+		t.Fatalf("unexpected inequality after mutating copy of base bytes")
+	}
+
+	// Construct from already generic unsupported ecosystem
+	unsupportedBytes := make([]byte, chainid.ChainIdLength)
+	unsupportedBytes[0] = 0x77
+	origGeneric, err := chainid.NewGenericLChainId(unsupportedBytes)
+	if err != nil {
+		t.Fatalf("unexpected error creating original generic: %v", err)
+	}
+	again, err := chainid.NewGenericLChainIdFromLChainId(origGeneric)
+	if err != nil {
+		t.Fatalf("unexpected error wrapping generic again: %v", err)
+	}
+	if !again.Equal(origGeneric) {
+		t.Fatalf("expected equality after wrapping generic chain id")
 	}
 }

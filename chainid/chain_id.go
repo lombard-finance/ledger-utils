@@ -226,6 +226,24 @@ type GenericLChainId struct {
 	lChainId
 }
 
+func NewGenericLChainId(in []byte) (*GenericLChainId, error) {
+	inner, err := newLChainId(in)
+	if err != nil {
+		return nil, err
+	}
+	return &GenericLChainId{
+		lChainId: *inner,
+	}, nil
+}
+
+func NewGenericLChainIdFromLChainId(in LChainId) (*GenericLChainId, error) {
+	return &GenericLChainId{
+		lChainId: lChainId{
+			inner: in.Bytes(),
+		},
+	}, nil
+}
+
 // ToEcosystem returns a specialized instance of the LChainId if the ecosystem is supported,
 // otherwise it returns ErrUnsupportedEcosystem
 func (g *GenericLChainId) ToEcosystem() (LChainId, error) {
