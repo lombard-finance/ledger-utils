@@ -8,6 +8,10 @@ type GogoprotoCustomType interface {
 	// Marshal serializes the instance into a byte array
 	Marshal() ([]byte, error)
 
+	// MarshalTo serializes the instance into the provided byte slice returning the number of bytes written
+	// this is not present in the referenced interface but it is required when building the chain
+	MarshalTo(data []byte) (int, error)
+
 	// Unmarshal deserializes the instance from a byte array
 	Unmarshal(data []byte) error
 

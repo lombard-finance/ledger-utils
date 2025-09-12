@@ -1,6 +1,7 @@
 package chainid_test
 
 import (
+	"bytes"
 	"testing"
 
 	"github.com/lombard-finance/ledger-utils/chainid"
@@ -81,5 +82,36 @@ func TestGenericLChainIdToEcosystemUnsupported(t *testing.T) {
 	}
 	if _, err := (&gVal).ToEcosystem(); err == nil {
 		t.Fatalf("expected unsupported ecosystem error")
+	}
+}
+
+func TestGenericLChainIdMarshalTo(t *testing.T) {
+	genericHex := "0x1100000000000000000000000000000000000000000000000000000000000001"
+	cid, err := chainid.NewLChainIdFromHex(genericHex)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	gVal, ok := cid.(chainid.GenericLChainId)
+	if !ok {
+		t.Fatalf("expected GenericLChainId, got %T", cid)
+	}
+	g := &gVal
+
+	buf := make([]byte, chainid.ChainIdLength)
+	n, err := g.MarshalTo(buf)
+	if err != nil {
+		t.Fatalf("MarshalTo error: %v", err)
+	}
+	if n != chainid.ChainIdLength {
+		t.Fatalf("written length mismatch: %d", n)
+	}
+	if !bytes.Equal(buf, g.Bytes()) {
+		t.Fatalf("buffer content mismatch")
+	}
+
+	// small buffer error
+	small := make([]byte, chainid.ChainIdLength-1)
+	if _, err := g.MarshalTo(small); err == nil {
+		t.Fatalf("expected error on small buffer")
 	}
 }

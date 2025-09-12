@@ -146,6 +146,15 @@ func (a *GenericAddress) Marshal() ([]byte, error) {
 	return a.Bytes(), nil
 }
 
+// MarshalTo implements common.GogoprotoCustomType.
+func (g *GenericAddress) MarshalTo(data []byte) (int, error) {
+	if len(data) < len(g.inner) {
+		return 0, fmt.Errorf("buffer too small: need %d, have %d", len(g.inner), len(data))
+	}
+	copy(data, g.inner)
+	return len(g.inner), nil
+}
+
 // Size returns the size of the address in bytes
 func (a *GenericAddress) Size() int {
 	return len(a.inner)

@@ -143,3 +143,29 @@ func TestGenericAddressToEcosystem(t *testing.T) {
 		t.Fatalf("bytes mismatch after conversion")
 	}
 }
+
+func TestGenericAddressMarshalTo(t *testing.T) {
+	payload := []byte{0x01, 0x02, 0x03, 0x04, 0x05}
+	g, err := address.NewGenericAddress(payload, chainid.EcosystemEVM)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	buf := make([]byte, len(payload))
+	n, err := g.MarshalTo(buf)
+	if err != nil {
+		t.Fatalf("MarshalTo error: %v", err)
+	}
+	if n != len(payload) {
+		t.Fatalf("written length mismatch: %d", n)
+	}
+	if !bytes.Equal(buf, payload) {
+		t.Fatalf("buffer content mismatch")
+	}
+
+	// buffer too small
+	small := make([]byte, len(payload)-1)
+	if _, err := g.MarshalTo(small); err == nil {
+		t.Fatalf("expected error on small buffer")
+	}
+}

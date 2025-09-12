@@ -264,6 +264,15 @@ func (g *GenericLChainId) Marshal() ([]byte, error) {
 	return g.Bytes(), nil
 }
 
+// MarshalTo implements common.GogoprotoCustomType.
+func (g *GenericLChainId) MarshalTo(data []byte) (int, error) {
+	if len(data) < ChainIdLength {
+		return 0, NewErrLength(ChainIdLength, len(data))
+	}
+	copy(data, g.inner)
+	return ChainIdLength, nil
+}
+
 // Size implements common.GogoprotoCustomType.
 func (g *GenericLChainId) Size() int {
 	return ChainIdLength
