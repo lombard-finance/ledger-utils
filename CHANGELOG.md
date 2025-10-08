@@ -1,3 +1,6 @@
+# [v0.5.1](https://github.com/lombard-finance/chain/releases/tag/v0.5.1)
+- Add LChainId for Avalanche C-Chain and Fuji testnet
+- Add LChainId for Lombard Ledger testnets
 # [v0.5.0](https://github.com/lombard-finance/chain/releases/tag/v0.5.0)
 - Support `LChainId` and `Address` for Starknet chains
 - Add `Address` constructors for Zero address on supported chains
