@@ -27,6 +27,18 @@ func TestCosmosLChainId(t *testing.T) {
 			nil,
 		},
 		{
+			"Lombard Ledger Staging",
+			"ledger-devnet-29",
+			"038d0f984242e52d587465e3e46c72d22d73a197199f9cfb8ae08f47fc770344",
+			nil,
+		},
+		{
+			"Lombard Ledger Testnet-BFT",
+			"bft",
+			"031f51c4e4cc1dae1c752d2f8fe2ae045da668a13f2e47a465964d630f5ed22e",
+			nil,
+		},
+		{
 			"Osmosis",
 			"osmosis-1",
 			"038ebfb6519e8d814f1b8aee62da9a4e173f7e6898d60d962042421d18dbe4ef",
