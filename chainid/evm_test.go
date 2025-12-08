@@ -4,9 +4,10 @@ import (
 	"testing"
 
 	"github.com/lombard-finance/ledger-utils/chainid"
+	"github.com/lombard-finance/ledger-utils/common"
 )
 
-func TestEVMIdentifier(t *testing.T) {
+func TestEVMLChainId_Predefined(t *testing.T) {
 	hexChainIds := []string{
 		"0x0000000000000000000000000000000000000000000000000000000000000001", // Ethereum Mainnet
 		"0x0000000000000000000000000000000000000000000000000000000000aa36a7", // Ethereum Sepolia
@@ -30,5 +31,25 @@ func TestEVMIdentifier(t *testing.T) {
 		default:
 			t.FailNow()
 		}
+	}
+}
+
+func TestEVMLChainId_AsMapKey(t *testing.T) {
+	a := chainid.NewEVMEthereumLChainId()
+	b, err := chainid.NewLChainIdFromHex(a.String())
+	common.AssertNoError(t, err)
+
+	// Ensure b is an EVM concrete type too
+	if _, ok := b.(chainid.EVMLChainId); !ok {
+		t.Fatalf("expected EVM LChainId, got %T", b)
+	}
+
+	m := map[chainid.LChainId]int{}
+	m[a] = 42
+	if m[a] != 42 {
+		t.Fatalf("expected 42, got %d", m[a])
+	}
+	if m[b] != 42 {
+		t.Fatalf("expected retrieval by equal key to return 42, got %d", m[b])
 	}
 }
