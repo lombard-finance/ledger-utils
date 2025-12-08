@@ -7,7 +7,7 @@ import (
 	"github.com/lombard-finance/ledger-utils/common"
 )
 
-func TestEVMLChainId_Predefined(t *testing.T) {
+func TestEVMLChainId_NewLChainIdFromHex(t *testing.T) {
 	hexChainIds := []string{
 		"0x0000000000000000000000000000000000000000000000000000000000000001", // Ethereum Mainnet
 		"0x0000000000000000000000000000000000000000000000000000000000aa36a7", // Ethereum Sepolia

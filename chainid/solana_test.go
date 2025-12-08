@@ -4,9 +4,10 @@ import (
 	"testing"
 
 	"github.com/lombard-finance/ledger-utils/chainid"
+	"github.com/lombard-finance/ledger-utils/common"
 )
 
-func TestSolanaIdentifier(t *testing.T) {
+func TestSolanaLChainId_NewLChainIdFromHex(t *testing.T) {
 	hexChainIds := []string{
 		"0x02296998a6f8e2a784db5d9f95e18fc23f70441a1039446801089879b08c7ef0",
 		"0x0259db5080fc2c6d3bcf7ca90712d3c2e5e6c28f27f0dfbb9953bdb0894c03ab",
@@ -20,4 +21,22 @@ func TestSolanaIdentifier(t *testing.T) {
 			t.FailNow()
 		}
 	}
+}
+
+// These tests verify that LChainId concrete types are usable as map keys.
+func TestSolanaLChainId_AsMapKey(t *testing.T) {
+	// Use two distinct equal instances
+	a := chainid.NewSolanaMainnetLChainId()
+	bPtr, err := chainid.NewLChainIdFromHex(a.String())
+	common.AssertNoError(t, err)
+	b := bPtr // both 'a' and 'b' are StarknetLChainId values
+
+	m := map[chainid.LChainId]string{}
+	m[a] = "ok"
+
+	// same key instance
+	common.EqualStrings(t, "ok", m[a])
+	// distinct but equal value should still map to the same bucket if comparable by value
+	// since the concrete types are value-comparable now, this should succeed
+	common.EqualStrings(t, "ok", m[b])
 }

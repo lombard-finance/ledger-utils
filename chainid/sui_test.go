@@ -8,7 +8,7 @@ import (
 	"github.com/lombard-finance/ledger-utils/common"
 )
 
-func TestSuiLChainId_Predefined(t *testing.T) {
+func TestSuiLChainId_NewLChainIdFromHex(t *testing.T) {
 	identifiers := []string{
 		"35834a8a",
 		"0x4c78adac",
