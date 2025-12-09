@@ -74,9 +74,6 @@ func TestCosmosLChainId_NewCosmosLChainId(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			lchainId, err := chainid.NewCosmosLChainId(tt.chainId)
 			if err != nil {
-				if lchainId != nil {
-					t.Error("both lchain id and err are not nil")
-				}
 				common.AssertError(t, err, tt.err)
 			} else {
 				equalEcosystem(t, chainid.EcosystemCosmos, lchainId.Ecosystem())
@@ -90,9 +87,10 @@ func TestCosmosLChainId_NewCosmosLChainId(t *testing.T) {
 func TestCosmosLChainId_AsMapKey(t *testing.T) {
 	// Use two distinct equal instances
 	a := chainid.NewLombardLedgerLChainId()
-	bPtr, err := chainid.NewLChainIdFromHex(a.String())
+	b, err := chainid.NewLChainIdFromHex(a.String())
 	common.AssertNoError(t, err)
-	b := bPtr // both 'a' and 'b' are CosmosLChainId values
+	c, err := chainid.NewCosmosLChainId("ledger-mainnet-1")
+	common.AssertNoError(t, err)
 
 	m := map[chainid.LChainId]string{}
 	m[a] = "ok"
@@ -102,4 +100,5 @@ func TestCosmosLChainId_AsMapKey(t *testing.T) {
 	// distinct but equal value should still map to the same bucket if comparable by value
 	// since the concrete types are value-comparable now, this should succeed
 	common.EqualStrings(t, "ok", m[b])
+	common.EqualStrings(t, "ok", m[c])
 }
