@@ -8,7 +8,7 @@ import (
 	"github.com/lombard-finance/ledger-utils/common"
 )
 
-func TestSuiIdentifier(t *testing.T) {
+func TestSuiLChainId_NewLChainIdFromHex(t *testing.T) {
 	identifiers := []string{
 		"35834a8a",
 		"0x4c78adac",
@@ -43,4 +43,22 @@ func TestSuiIdentifier(t *testing.T) {
 		}
 	}
 
+}
+
+// These tests verify that LChainId concrete types are usable as map keys.
+func TestSuiLChainId_AsMapKey(t *testing.T) {
+	// Use two distinct equal instances
+	a := chainid.NewSuiMainnetLChainId()
+	bPtr, err := chainid.NewSuiLChainId(a.Identifier())
+	common.AssertNoError(t, err)
+	b := *bPtr // both 'a' and 'b' are SuiLChainId values
+
+	m := map[chainid.LChainId]string{}
+	m[a] = "ok"
+
+	// same key instance
+	common.EqualStrings(t, "ok", m[a])
+	// distinct but equal value should still map to the same bucket if comparable by value
+	// since the concrete types are value-comparable now, this should succeed
+	common.EqualStrings(t, "ok", m[b])
 }

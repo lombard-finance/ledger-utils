@@ -8,7 +8,7 @@ import (
 )
 
 type StarknetLChainId struct {
-	lChainId
+    lChainId
 }
 
 func NewStarknetLChainId(id string) (*StarknetLChainId, error) {
@@ -47,23 +47,23 @@ func NewStarknetLChainIdFromName(name string) (*StarknetLChainId, error) {
 }
 
 // NewStarknetMainnetLChainId returns the Starknet Lombard Chain Id of Starknet mainnet SN_MAIN
-func NewStarknetMainnetLChainId() *StarknetLChainId {
-	chId, _ := NewStarknetLChainId("0x534e5f4d41494e")
-	return chId
+func NewStarknetMainnetLChainId() StarknetLChainId {
+    chId, _ := NewStarknetLChainId("0x534e5f4d41494e")
+    return *chId
 }
 
 // NewStarknetSepoliaLChainId returns the Starknet Lombard Chain Id of Starknet sepolia SN_SEPOLIA
-func NewStarknetSepoliaLChainId() *StarknetLChainId {
-	chId, _ := NewStarknetLChainId("0x534e5f5345504f4c4941")
-	return chId
+func NewStarknetSepoliaLChainId() StarknetLChainId {
+    chId, _ := NewStarknetLChainId("0x534e5f5345504f4c4941")
+    return *chId
 }
 
 // Identifier returns the textual identifier of a Starknet network.
 // They all start with SN
-func (ch *StarknetLChainId) Identifier() string {
-	snIndex := bytes.Index(ch.inner[1:], []byte("SN"))
-	if snIndex == -1 {
-		return string(ch.inner[1:])
-	}
-	return string(ch.inner[snIndex+1:])
+func (ch StarknetLChainId) Identifier() string {
+    snIndex := bytes.Index(ch.inner[1:], []byte("SN"))
+    if snIndex == -1 {
+        return string(ch.inner[1:])
+    }
+    return string(ch.inner[snIndex+1:])
 }
