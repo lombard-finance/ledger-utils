@@ -12,26 +12,28 @@ type EVMLChainId struct {
 
 // NewEVMLChainId returns a new LChainId instance for the provided chain Id.
 // Chain Id must be provided in hex form eith either with or w/o the leading 0x
-func NewEVMLChainId(id string) (*EVMLChainId, error) {
-	trimmed := strings.TrimPrefix(id, "0x")
-	if len(trimmed) > ChainIdLength*2 {
-		return nil, NewErrLength(ChainIdLength, len(trimmed))
-	}
-	var innerChainId *lChainId
-	var err error
-	if len(trimmed) == 64 {
-		innerChainId, err = newLChainIdFromHex(EcosystemEVM.ToEcosystemHexByte() + trimmed[2:])
-	} else {
-		innerChainId, err = newLChainIdFromHex(
-			EcosystemEVM.ToEcosystemHexByte() +
-				common.Repeated64Zeros[len(trimmed)+2:] +
-				trimmed,
-		)
-	}
-	if err != nil {
-		return nil, err
-	}
-	return &EVMLChainId{lChainId: *innerChainId}, nil
+// It returns a value type to ensure EVMLChainId can be used reliably as a map key
+// and remains equal across different constructors.
+func NewEVMLChainId(id string) (EVMLChainId, error) {
+    trimmed := strings.TrimPrefix(id, "0x")
+    if len(trimmed) > ChainIdLength*2 {
+        return EVMLChainId{}, NewErrLength(ChainIdLength, len(trimmed))
+    }
+    var innerChainId *lChainId
+    var err error
+    if len(trimmed) == 64 {
+        innerChainId, err = newLChainIdFromHex(EcosystemEVM.ToEcosystemHexByte() + trimmed[2:])
+    } else {
+        innerChainId, err = newLChainIdFromHex(
+            EcosystemEVM.ToEcosystemHexByte() +
+                common.Repeated64Zeros[len(trimmed)+2:] +
+                trimmed,
+        )
+    }
+    if err != nil {
+        return EVMLChainId{}, err
+    }
+    return EVMLChainId{lChainId: *innerChainId}, nil
 }
 
 // NewEVMEthereumLChainId returns the LChainId for the Ethereum blockchain (0x1)

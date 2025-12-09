@@ -36,13 +36,10 @@ func TestEVMLChainId_NewLChainIdFromHex(t *testing.T) {
 
 func TestEVMLChainId_AsMapKey(t *testing.T) {
 	a := chainid.NewEVMEthereumLChainId()
-	b, err := chainid.NewLChainIdFromHex(a.String())
+	b, err := chainid.NewEVMLChainId("0x01")
 	common.AssertNoError(t, err)
-
-	// Ensure b is an EVM concrete type too
-	if _, ok := b.(chainid.EVMLChainId); !ok {
-		t.Fatalf("expected EVM LChainId, got %T", b)
-	}
+	c, err := chainid.NewLChainIdFromHex(a.String())
+	common.AssertNoError(t, err)
 
 	m := map[chainid.LChainId]int{}
 	m[a] = 42
@@ -51,5 +48,8 @@ func TestEVMLChainId_AsMapKey(t *testing.T) {
 	}
 	if m[b] != 42 {
 		t.Fatalf("expected retrieval by equal key to return 42, got %d", m[b])
+	}
+	if m[c] != 42 {
+		t.Fatalf("expected retrieval by hex key to return 42, got %d", m[c])
 	}
 }

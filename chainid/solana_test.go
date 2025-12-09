@@ -27,9 +27,10 @@ func TestSolanaLChainId_NewLChainIdFromHex(t *testing.T) {
 func TestSolanaLChainId_AsMapKey(t *testing.T) {
 	// Use two distinct equal instances
 	a := chainid.NewSolanaMainnetLChainId()
-	bPtr, err := chainid.NewLChainIdFromHex(a.String())
+	b, err := chainid.NewLChainIdFromHex(a.String())
 	common.AssertNoError(t, err)
-	b := bPtr // both 'a' and 'b' are StarknetLChainId values
+	c, err := chainid.NewSolanaLChainId("5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d")
+	common.AssertNoError(t, err)
 
 	m := map[chainid.LChainId]string{}
 	m[a] = "ok"
@@ -39,4 +40,5 @@ func TestSolanaLChainId_AsMapKey(t *testing.T) {
 	// distinct but equal value should still map to the same bucket if comparable by value
 	// since the concrete types are value-comparable now, this should succeed
 	common.EqualStrings(t, "ok", m[b])
+	common.EqualStrings(t, "ok", m[c])
 }
