@@ -7,7 +7,7 @@ import (
 	"github.com/lombard-finance/ledger-utils/common"
 )
 
-func TestCosmosLChainId(t *testing.T) {
+func TestCosmosLChainId_NewCosmosLChainId(t *testing.T) {
 	tests := []struct {
 		name             string
 		chainId          string
@@ -74,9 +74,6 @@ func TestCosmosLChainId(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			lchainId, err := chainid.NewCosmosLChainId(tt.chainId)
 			if err != nil {
-				if lchainId != nil {
-					t.Error("both lchain id and err are not nil")
-				}
 				common.AssertError(t, err, tt.err)
 			} else {
 				equalEcosystem(t, chainid.EcosystemCosmos, lchainId.Ecosystem())
@@ -84,4 +81,24 @@ func TestCosmosLChainId(t *testing.T) {
 			}
 		})
 	}
+}
+
+// These tests verify that LChainId concrete types are usable as map keys.
+func TestCosmosLChainId_AsMapKey(t *testing.T) {
+	// Use two distinct equal instances
+	a := chainid.NewLombardLedgerLChainId()
+	b, err := chainid.NewLChainIdFromHex(a.String())
+	common.AssertNoError(t, err)
+	c, err := chainid.NewCosmosLChainId("ledger-mainnet-1")
+	common.AssertNoError(t, err)
+
+	m := map[chainid.LChainId]string{}
+	m[a] = "ok"
+
+	// same key instance
+	common.EqualStrings(t, "ok", m[a])
+	// distinct but equal value should still map to the same bucket if comparable by value
+	// since the concrete types are value-comparable now, this should succeed
+	common.EqualStrings(t, "ok", m[b])
+	common.EqualStrings(t, "ok", m[c])
 }

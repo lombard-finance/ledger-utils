@@ -90,15 +90,13 @@ type LChainId interface {
 // NewLChainId creates a new ChainId instance by accepting the bytes of the chain Id encoded
 // in Big Endian. Function returns an error if the chain Id is invalid or unsupported.
 func NewLChainId(in []byte) (LChainId, error) {
-	if err := ValidateChainIdFromBytes(in); err != nil {
-		return nil, NewErrLChainIdInvalid(err)
-	}
-	out := make([]byte, ChainIdLength)
-	copy(out, in)
-	id := lChainId{
-		inner: out,
-	}
-	switch id.Ecosystem() {
+    if err := ValidateChainIdFromBytes(in); err != nil {
+        return nil, NewErrLChainIdInvalid(err)
+    }
+    var out [ChainIdLength]byte
+    copy(out[:], in)
+    id := lChainId{inner: out}
+    switch id.Ecosystem() {
 	case EcosystemEVM:
 		return EVMLChainId{
 			lChainId: id,
@@ -143,20 +141,18 @@ func NewLChainIdFromHex(s string) (LChainId, error) {
 
 // lChainId is the base implementation providing basic feature all chain ids implement
 type lChainId struct {
-	inner []byte
+    inner [ChainIdLength]byte
 }
 
 // newLChainId creates a new ChainId instance by accepting the bytes of the chain Id encoded
 // in Big Endian. Function returns an error if the chain Id is invalid or unsupported.
 func newLChainId(in []byte) (*lChainId, error) {
-	if err := ValidateChainIdFromBytes(in); err != nil {
-		return nil, NewErrLChainIdInvalid(err)
-	}
-	out := make([]byte, ChainIdLength)
-	copy(out, in)
-	return &lChainId{
-		inner: out,
-	}, nil
+    if err := ValidateChainIdFromBytes(in); err != nil {
+        return nil, NewErrLChainIdInvalid(err)
+    }
+    var out [ChainIdLength]byte
+    copy(out[:], in)
+    return &lChainId{inner: out}, nil
 }
 
 // newLChainIdFromHex creates a new ChainId instance by accepting an hex string of the chain Id.
@@ -177,32 +173,30 @@ func (a lChainId) String() string {
 
 // Hex returns the hex encoding of the DestinationChainId without leading 0x
 func (a lChainId) Hex() string {
-	return hex.EncodeToString(a.inner)
+    return hex.EncodeToString(a.inner[:])
 }
 
 // Bytes returns a copy of the bytes of the ChainId (BigEndian)
 func (a lChainId) Bytes() []byte {
-	out := make([]byte, ChainIdLength)
-	copy(out, a.inner)
-	return out
+    out := make([]byte, ChainIdLength)
+    copy(out, a.inner[:])
+    return out
 }
 
 // FixedBytes returns a copy of the bytes of the ChainId (BigEndian) as an array rather than slice
 func (a lChainId) FixedBytes() [ChainIdLength]byte {
-	var out [ChainIdLength]byte
-	copy(out[:], a.inner)
-	return out
+    return a.inner
 }
 
 // Ecosystem returns the Ecosystem the ChainId belongs to.
 func (a lChainId) Ecosystem() Ecosystem {
-	// Saved in big endian so MSB is in position 0
-	return Ecosystem(a.inner[0])
+    // Saved in big endian so MSB is in position 0
+    return Ecosystem(a.inner[0])
 }
 
 // Equal reports whether a and be are the same
 func (a lChainId) Equal(b LChainId) bool {
-	return bytes.Equal(a.inner, b.Bytes())
+    return bytes.Equal(a.inner[:], b.Bytes())
 }
 
 // ValidateChainIdFromBytes validates if a slice of bytes can be used to create a valid

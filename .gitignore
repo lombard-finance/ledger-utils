@@ -4,3 +4,8 @@
 
 # Misc
 .DS_Store
+
+# Agents
+.junie
+.aiignore
+.cursor
