@@ -31,3 +31,5 @@ func NewErrUnsupportedEcosystem(e byte) error {
 		fmt.Errorf("%w: %d", ErrUnsupportedEcosystem, e),
 	)
 }
+
+var ErrZeroChainId = fmt.Errorf("%w: chain id is zero", ErrLChainIdInvalid)

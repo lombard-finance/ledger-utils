@@ -219,6 +219,14 @@ func TestLChainIdErrorConditions(t *testing.T) {
 	badCharChainId := "0xY0" + correctHex[4:]
 	_, err = chainid.NewLChainIdFromHex(badCharChainId)
 	common.AssertError(t, err, chainid.ErrLChainIdInvalid)
+
+	zeroHex := "0x0000000000000000000000000000000000000000000000000000000000000000"
+	_, err = chainid.NewLChainIdFromHex(zeroHex)
+	common.AssertError(t, err, chainid.ErrLChainIdInvalid, chainid.ErrZeroChainId)
+	zeroBytes, err := hex.DecodeString(strings.TrimPrefix(zeroHex, "0x"))
+	common.AssertNoError(t, err)
+	_, err = chainid.NewLChainId(zeroBytes)
+	common.AssertError(t, err, chainid.ErrLChainIdInvalid, chainid.ErrZeroChainId)
 }
 
 func TestLChainIdFactories(t *testing.T) {
