@@ -96,6 +96,18 @@ func TestLChainId(t *testing.T) {
 			func() chainid.LChainId { return chainid.NewEVMKatanaTataraTestnetLChainId() },
 		},
 		{
+			"Avalanche C-Chain",
+			"0x000000000000000000000000000000000000000000000000000000000000a86a",
+			chainid.EcosystemEVM,
+			func() chainid.LChainId { return chainid.NewEVMAvalancheLChainId() },
+		},
+		{
+			"Avalanche Fuji Testnet",
+			"0x000000000000000000000000000000000000000000000000000000000000a869",
+			chainid.EcosystemEVM,
+			func() chainid.LChainId { return chainid.NewEVMAvalancheFujiTestnetLChainId() },
+		},
+		{
 			"Sui",
 			"0x0100000000000000000000000000000000000000000000000000000035834a8a",
 			chainid.EcosystemSui,
