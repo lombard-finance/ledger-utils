@@ -318,6 +318,16 @@ func TestLChainIdFactories(t *testing.T) {
 			func() chainid.LChainId { return chainid.NewLombardLedgerLChainId() },
 		},
 		{
+			"ledger-testnet-1",
+			func(in string) (chainid.LChainId, error) { return chainid.NewCosmosLChainId(in) },
+			func() chainid.LChainId { return chainid.NewLombardLedgerGastaldTestnetLChainId() },
+		},
+		{
+			"ledger-devnet-29",
+			func(in string) (chainid.LChainId, error) { return chainid.NewCosmosLChainId(in) },
+			func() chainid.LChainId { return chainid.NewLombardLedgerStagingDevnetLChainId() },
+		},
+		{
 			"osmosis-1",
 			func(in string) (chainid.LChainId, error) { return chainid.NewCosmosLChainId(in) },
 			func() chainid.LChainId { return chainid.NewOsmosisLChainId() },
