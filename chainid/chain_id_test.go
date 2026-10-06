@@ -127,7 +127,7 @@ func TestLChainId(t *testing.T) {
 		},
 		{
 			"MegaETH Testnet",
-			"0x00000000000000000000000000000000000000000000000000000000000018c6",
+			"0x00000000000000000000000000000000000000000000000000000000000018c7",
 			chainid.EcosystemEVM,
 			func() chainid.LChainId { return chainid.NewEVMMegaETHTestnetLChainId() },
 		},
@@ -344,7 +344,7 @@ func TestLChainIdFactories(t *testing.T) {
 			func() chainid.LChainId { return chainid.NewEVMMegaETHLChainId() },
 		},
 		{
-			"0x18c6", // MegaETH Testnet
+			"0x18c7", // MegaETH Testnet
 			func(in string) (chainid.LChainId, error) { return chainid.NewEVMLChainId(in) },
 			func() chainid.LChainId { return chainid.NewEVMMegaETHTestnetLChainId() },
 		},
