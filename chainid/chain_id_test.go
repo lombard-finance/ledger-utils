@@ -108,6 +108,42 @@ func TestLChainId(t *testing.T) {
 			func() chainid.LChainId { return chainid.NewEVMAvalancheFujiTestnetLChainId() },
 		},
 		{
+			"Monad",
+			"0x000000000000000000000000000000000000000000000000000000000000008f",
+			chainid.EcosystemEVM,
+			func() chainid.LChainId { return chainid.NewEVMMonadLChainId() },
+		},
+		{
+			"Monad Testnet",
+			"0x000000000000000000000000000000000000000000000000000000000000279f",
+			chainid.EcosystemEVM,
+			func() chainid.LChainId { return chainid.NewEVMMonadTestnetLChainId() },
+		},
+		{
+			"MegaETH",
+			"0x00000000000000000000000000000000000000000000000000000000000010e6",
+			chainid.EcosystemEVM,
+			func() chainid.LChainId { return chainid.NewEVMMegaETHLChainId() },
+		},
+		{
+			"MegaETH Testnet",
+			"0x00000000000000000000000000000000000000000000000000000000000018c6",
+			chainid.EcosystemEVM,
+			func() chainid.LChainId { return chainid.NewEVMMegaETHTestnetLChainId() },
+		},
+		{
+			"Stable",
+			"0x00000000000000000000000000000000000000000000000000000000000003dc",
+			chainid.EcosystemEVM,
+			func() chainid.LChainId { return chainid.NewEVMStableLChainId() },
+		},
+		{
+			"Stable Testnet",
+			"0x0000000000000000000000000000000000000000000000000000000000000899",
+			chainid.EcosystemEVM,
+			func() chainid.LChainId { return chainid.NewEVMStableTestnetLChainId() },
+		},
+		{
 			"Sui",
 			"0x0100000000000000000000000000000000000000000000000000000035834a8a",
 			chainid.EcosystemSui,
@@ -291,6 +327,36 @@ func TestLChainIdFactories(t *testing.T) {
 			"0x1f977", // Katana Tatara Testnet
 			func(in string) (chainid.LChainId, error) { return chainid.NewEVMLChainId(in) },
 			func() chainid.LChainId { return chainid.NewEVMKatanaTataraTestnetLChainId() },
+		},
+		{
+			"0x8f", // Monad
+			func(in string) (chainid.LChainId, error) { return chainid.NewEVMLChainId(in) },
+			func() chainid.LChainId { return chainid.NewEVMMonadLChainId() },
+		},
+		{
+			"0x279f", // Monad Testnet
+			func(in string) (chainid.LChainId, error) { return chainid.NewEVMLChainId(in) },
+			func() chainid.LChainId { return chainid.NewEVMMonadTestnetLChainId() },
+		},
+		{
+			"0x10e6", // MegaETH
+			func(in string) (chainid.LChainId, error) { return chainid.NewEVMLChainId(in) },
+			func() chainid.LChainId { return chainid.NewEVMMegaETHLChainId() },
+		},
+		{
+			"0x18c6", // MegaETH Testnet
+			func(in string) (chainid.LChainId, error) { return chainid.NewEVMLChainId(in) },
+			func() chainid.LChainId { return chainid.NewEVMMegaETHTestnetLChainId() },
+		},
+		{
+			"0x3dc", // Stable
+			func(in string) (chainid.LChainId, error) { return chainid.NewEVMLChainId(in) },
+			func() chainid.LChainId { return chainid.NewEVMStableLChainId() },
+		},
+		{
+			"0x899", // Stable Testnet
+			func(in string) (chainid.LChainId, error) { return chainid.NewEVMLChainId(in) },
+			func() chainid.LChainId { return chainid.NewEVMStableTestnetLChainId() },
 		},
 		{
 			"0x35834a8a",
