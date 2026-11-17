@@ -281,6 +281,35 @@ func TestStarknetAddress(t *testing.T) {
 		_, err = address.NewStarknetAddressFromHex(validAddressString[:5] + "&" + validAddressString[6:])
 		common.AssertError(t, err, address.ErrBadAddress, address.ErrBadAddressStarknet)
 	})
+
+	t.Run("should only accept addresses lower than the field prime", func(t *testing.T) {
+		// the field prime is 2^251 + 17*2^192 + 1
+		tests := []struct {
+			name    string
+			address string
+			wantErr bool
+		}{
+			{"zero", "0x0000000000000000000000000000000000000000000000000000000000000000", false},
+			{"prime minus one", "0x0800000000000011000000000000000000000000000000000000000000000000", false},
+			{"prime", "0x0800000000000011000000000000000000000000000000000000000000000001", true},
+			// same field element as validAddressString
+			{"valid address plus prime", "0x0c9d36570d4e47058e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc8", true},
+			{"max uint256", "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", true},
+		}
+		for _, tt := range tests {
+			t.Run(tt.name, func(t *testing.T) {
+				_, err := address.NewStarknetAddressFromHex(tt.address)
+				if tt.wantErr {
+					common.AssertError(t, err, address.ErrBadAddress, address.ErrBadAddressStarknet)
+				} else {
+					common.AssertNoError(t, err)
+				}
+				// the generic constructor applies the same rule
+				_, err = address.NewAddressFromHex(tt.address, chainid.EcosystemStarknet)
+				common.AssertTrue(t, (err != nil) == tt.wantErr)
+			})
+		}
+	})
 }
 
 func TestGenericAddress(t *testing.T) {

@@ -14,6 +14,9 @@ const StarknetAddressLength = 32
 // ErrBadAddressStarknet is an ErrBadAddress specialized for StarknetAddress
 var ErrBadAddressStarknet = fmt.Errorf("starknet %w", ErrBadAddress)
 
+// starknetFieldPrime is the Starknet field prime 2^251 + 17*2^192 + 1, big-endian encoded
+var starknetFieldPrime = [StarknetAddressLength]byte{0: 0x08, 7: 0x11, 31: 0x01}
+
 // StarknetAddress is the address type for the Starknet L2
 type StarknetAddress struct {
 	inner [StarknetAddressLength]byte
@@ -23,6 +26,11 @@ type StarknetAddress struct {
 func NewStarknetAddress(b []byte) (*StarknetAddress, error) {
 	if len(b) != StarknetAddressLength {
 		return nil, fmt.Errorf("%w: lenght error, given %d, expected %d", ErrBadAddressStarknet, len(b), StarknetAddressLength)
+	}
+	// An address is a field element. Values not lower than the prime are reduced modulo the prime
+	// by Starknet tooling, so they would be a second byte representation of an existing address.
+	if bytes.Compare(b, starknetFieldPrime[:]) >= 0 {
+		return nil, fmt.Errorf("%w: not lower than the field prime: %x", ErrBadAddressStarknet, b)
 	}
 	a := &StarknetAddress{}
 	copy(a.inner[:], b)
