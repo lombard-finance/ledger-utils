@@ -1,5 +1,6 @@
 # Unreleased
 - Add `LChainId` constructors for Monad, MegaETH, Stable and their testnets
+- Reject Starknet addresses that are not lower than the Starknet field prime, so an address has a single byte representation
 # [v0.5.0](https://github.com/lombard-finance/chain/releases/tag/v0.5.0)
 - Support `LChainId` and `Address` for Starknet chains
 - Add `Address` constructors for Zero address on supported chains
