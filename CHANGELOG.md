@@ -6,7 +6,7 @@
 
 - **Breaking:** store the chain Id as a fixed `[32]byte` array so `LChainId` values are comparable and usable as map keys ([#18](https://github.com/lombard-finance/ledger-utils/pull/18)) (hashxtree)
 - **Breaking:** return values instead of pointers from the Cosmos, EVM, Solana, Starknet and Sui `LChainId` constructors ([#19](https://github.com/lombard-finance/ledger-utils/pull/19)) (hashxtree)
-- Bump minimum Go version to 1.26.10 ([#18](https://github.com/lombard-finance/ledger-utils/pull/18)) (hashxtree)
+- Bump minimum Go version to 1.26.11 ([#18](https://github.com/lombard-finance/ledger-utils/pull/18)) (hashxtree)
 
 ### Added
 
